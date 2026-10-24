@@ -25,7 +25,7 @@ function getQueryClient () {
     }
 }
 
-export default function providers ({children} : {children : ReactNode }) {
+export default function QueryProviders ({children} : {children : ReactNode }) {
     const QueryClient = getQueryClient()
     return(
         <QueryClientProvider client={QueryClient}>

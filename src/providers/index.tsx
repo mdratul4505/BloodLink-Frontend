@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
+import QueryProviders from "./query.provider";
 
-export default function providers ({children} : {children : ReactNode}) {
+export default function Providers ({children} : {children : ReactNode}) {
     return(
-        <div>
+        <QueryProviders>
             {children}
-        </div>
+        </QueryProviders>
     )
 }
