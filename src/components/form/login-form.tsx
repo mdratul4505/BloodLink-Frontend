@@ -1,11 +1,11 @@
 "use client"
-import { Field, useForm } from "@tanstack/react-form"
+import { useForm } from "@tanstack/react-form"
 
 import { email } from "zod"
 import { Input } from "../ui/input"
 import { Button } from "../ui/button"
-import { FieldContent } from "../ui/field"
-
+import { Field, FieldError, FieldLabel } from "../ui/field"
+import {loginSchema} from "@/validation"
 export default function LoginForm () {
 
     const form = useForm({
@@ -13,11 +13,13 @@ export default function LoginForm () {
             email: "",
             password : ""
         },
-        onSubmit:  (data) =>{
-                console.log(data)
+        validators : {
+            onSubmit:loginSchema
+        },
+        onSubmit:  (value) =>{
+                console.log(value.value)
         }
     })
-
         return(
             <div>
                <p>login form</p>
@@ -29,9 +31,21 @@ export default function LoginForm () {
                {
                 (field)=>{
 
-                        
+                        const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
                        return(
-                         <Input className="border border-red-500" name={field.name}/>
+                        <Field>
+                            <FieldLabel htmlFor={field.name}> Email</FieldLabel>
+                            <Input
+                            id={field.name}
+                          name={field.name}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          onBlur={field.handleBlur}
+                          value={field.state.value}
+                          autoComplete="off"
+                          />
+                          {isInvalid && <FieldError errors={field.state.meta.errors}></FieldError>}
+                        </Field>
+                         
                        )
                     
 
