@@ -1,5 +1,5 @@
 "use client"
-import { useForm } from "@tanstack/react-form"
+import { concatenatePaths, useForm } from "@tanstack/react-form"
 
 import { email } from "zod"
 import { Input } from "../ui/input"
@@ -8,9 +8,13 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field"
 import {loginSchema} from "@/validation"
 import { useState } from "react"
 import { Eye, EyeClosed } from "lucide-react"
+import { UseLogin } from "@/hooks"
+import { Condiment } from "next/font/google"
+import { Console } from "console"
 export default function LoginForm () {
 
     const [showPassword , setShowPassword] = useState(false)
+    const {mutate:login , isPending: loginPending} = UseLogin()
 
     const form = useForm({
         defaultValues: {
@@ -21,7 +25,18 @@ export default function LoginForm () {
             onSubmit:loginSchema
         },
         onSubmit:  (value) =>{
-                console.log(value.value)
+                const loginData=  {
+                  email: value.value.email,
+                  password : value.value.password
+                }
+                login(loginData , {onSuccess: (res)=>{
+                  console.log(res)
+
+                },
+                onError : (error) =>{
+                console.log(error)
+                }
+              })
         }
     })
         return(
