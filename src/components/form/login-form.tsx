@@ -30,6 +30,7 @@ export default function LoginForm () {
                   password : value.value.password
                 }
                 login(loginData , {onSuccess: (res)=>{
+                  router.push("/")
                   console.log(res)
 
                 },
