@@ -11,3 +11,7 @@ export function userLogOut () {
 export function getMe () {
  return apiClient("/users/me")
 }
+
+export function googleOAuth ( payload : {idToken : string}) {
+return apiClient("/auth/google", {body:payload})
+}
