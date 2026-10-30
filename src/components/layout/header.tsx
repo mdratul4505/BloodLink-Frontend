@@ -1,9 +1,13 @@
-
+"use client"
 import Link from "next/link"
 import { Button } from "../ui/button"
+import { UseGetMe } from "@/hooks"
 // import { Button } from "../ui/button"
 
 export default function Header  () {
+
+    const {data , isLoading} = UseGetMe()
+
     const routes = [
         {name : "Home", url : "/"},
         {name : "About Us", url : "/about-us"},
@@ -21,13 +25,18 @@ export default function Header  () {
                }
                </nav>
                <div>
-                <Button
+                {!isLoading && !data&& <Button
                 variant="outline"
-                render={<Link href="/login">Lgoin</Link>}
+                render={<Link href="/login">Login</Link>}
                 nativeButton ={false}
                 >
                     Login
-                </Button>
+                </Button>}
+                {!isLoading && data&& <Button variant={"destructive"}
+                
+                >
+                    LogOut
+                </Button>}
                </div>
                </div>
             </header>
