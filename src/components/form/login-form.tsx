@@ -8,17 +8,19 @@ import { Field, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "../ui
 import {loginSchema} from "@/validation"
 import { useState } from "react"
 import { Eye, EyeClosed } from "lucide-react"
-import { UseLogin } from "@/hooks"
+import { UseGoogleOAuth, UseLogin } from "@/hooks"
 import { Condiment } from "next/font/google"
-import { Console } from "console"
-import { toast } from "../ui/toast"
+import { Console, error } from "console"
+import { toast, Toaster } from "../ui/toast"
 import { Router } from "next/router"
 import { Spinner } from "../ui/spinner"
 import { GoogleLogin } from "@react-oauth/google"
+import { Toast } from "@base-ui/react"
 export default function LoginForm () {
 
     const [showPassword , setShowPassword] = useState(false)
     const {mutate:login , isPending: loginPending} = UseLogin()
+    const {mutate : googleLogin} = UseGoogleOAuth()
 
     const form = useForm({
         defaultValues: {
@@ -53,6 +55,46 @@ export default function LoginForm () {
               })
         }
     })
+
+    const handelGoogleSuccess = (credentialResponse : {credential? : string }) =>{
+      const idToken = credentialResponse.credential
+      if(!idToken){
+        toast.add({
+        title : "Google OAuth Failed",
+        description : "Something Went Wrong. please try again",
+        type : "error"
+        
+      })
+      return
+      }
+      googleLogin({idToken}, {onSuccess :()=>{
+         toast.add({
+  title: "Login success",
+  description: "Wlocome Back",
+  type : "success"
+})
+router.push("/")
+
+      },
+    onError : (error) =>{
+                toast.add({
+  title: "Authroization failure",
+  description: error.message || "Some thing went wrong. Please try again ",
+  type : "error"
+})
+                }
+    })
+      
+    }
+
+    const handleGoogleError = () =>{
+      toast.add({
+        title : "Google OAuth Failed",
+        description : "Something Went Wrong. please try again",
+        type : "error"
+        
+      })
+    }
         return(
         <div className="flex flex-col gap-5">
       <div className="flex flex-col items-center gap-2 text-center">
@@ -134,8 +176,11 @@ export default function LoginForm () {
                 </FieldGroup>
 
                </form>
-               <FieldSeparator>or</FieldSeparator>
-               <GoogleLogin onSuccess={() =>{}} onError ={()=>{}}/>
+               <FieldSeparator>Or Continue Whith</FieldSeparator>
+               <GoogleLogin
+               shape="pill"
+               text="continue_with"
+               onSuccess={handelGoogleSuccess} onError ={handleGoogleError}/>
 
             </div>
         )
