@@ -16,7 +16,8 @@ export function UseLogOut () {
 export function UseGetMe () {
  return useQuery({
    queryKey : ["user"],
-   queryFn : getMe
+   queryFn : getMe,
+   retry : false,
  })
 }
 

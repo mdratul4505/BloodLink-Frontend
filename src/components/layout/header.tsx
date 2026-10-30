@@ -1,12 +1,38 @@
 "use client"
 import Link from "next/link"
 import { Button } from "../ui/button"
-import { UseGetMe } from "@/hooks"
+import { UseGetMe, UseLogOut } from "@/hooks"
+import { toast } from "../ui/toast"
+import { useQueryClient } from "@tanstack/react-query"
 // import { Button } from "../ui/button"
 
 export default function Header  () {
 
     const {data , isLoading} = UseGetMe()
+    const {mutate : LogOut} = UseLogOut()
+    const queryClient = useQueryClient()
+    const handleLogOut = () =>{
+        LogOut(undefined, {
+            onSuccess: ()=>{
+                toast.add({
+                    title : "Good Bye",
+                    description : "LogOut Successfully",
+                    type : "success"
+                })
+                queryClient.removeQueries({
+                    queryKey: ["user"]
+                })
+            },
+            onError:()=>{
+                toast.add({
+                    title : "LogOut Failed",
+                    description : "Something went Worng",
+                    type : "error"
+                })
+
+            }
+        })
+    }
 
     const routes = [
         {name : "Home", url : "/"},
@@ -32,7 +58,7 @@ export default function Header  () {
                 >
                     Login
                 </Button>}
-                {!isLoading && data&& <Button variant={"destructive"}
+                {!isLoading && data&& <Button onClick={handleLogOut} variant={"destructive"}
                 
                 >
                     LogOut
