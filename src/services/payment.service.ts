@@ -37,4 +37,12 @@ export const paymentService = {
     );
     return data;
   },
+
+  executeBkashCallback: async (params: { paymentID?: string; status?: string }) => {
+    const { data } = await apiClient.get<IApiResponse<IPayment>>(
+      API_ENDPOINTS.PAYMENTS.BKASH_CALLBACK,
+      { params }
+    );
+    return data;
+  },
 };
