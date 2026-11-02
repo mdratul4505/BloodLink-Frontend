@@ -1,48 +1,23 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  getMe,
-  googleOAuth,
-  resendVerificationOtp,
-  userLogin,
-  userLogOut,
-  userRegister,
-  verifyEmail,
-  type RegisterPayload,
-} from "@/api";
-import { useMutation, useQuery } from "@tanstack/react-query";
+  authService,
+  LoginPayload,
+  RegisterPayload,
+} from "@/services/auth.service";
+import apiClient from "@/lib/api/axios";
+import { API_ENDPOINTS } from "@/lib/api/endpoints";
+import { IApiResponse, IUser } from "@/types";
 
 export function useLogin() {
   return useMutation({
-    mutationFn: userLogin,
+    mutationFn: (payload: LoginPayload) => authService.login(payload),
   });
 }
 export const UseLogin = useLogin;
 
-export function useLogOut() {
-  return useMutation({
-    mutationFn: userLogOut,
-  });
-}
-export const UseLogOut = useLogOut;
-
-export function useGoogleOAuth() {
-  return useMutation({
-    mutationFn: googleOAuth,
-  });
-}
-export const UseGoogleOAuth = useGoogleOAuth;
-
-export function useGetMe() {
-  return useQuery({
-    queryKey: ["user"],
-    queryFn: getMe,
-    retry: false,
-  });
-}
-export const UseGetMe = useGetMe;
-
 export function useRegistration() {
   return useMutation({
-    mutationFn: (payload: RegisterPayload) => userRegister(payload),
+    mutationFn: (payload: RegisterPayload) => authService.register(payload),
   });
 }
 export const UseRegistration = useRegistration;
@@ -50,12 +25,72 @@ export const UseRegistration = useRegistration;
 export function useVerifyEmail() {
   return useMutation({
     mutationFn: (payload: { email: string; otp: string }) =>
-      verifyEmail(payload),
+      authService.verifyEmail(payload),
   });
 }
 
 export function useResendVerificationOtp() {
   return useMutation({
-    mutationFn: (payload: { email: string }) => resendVerificationOtp(payload),
+    mutationFn: (email: string) => authService.resendVerificationOtp(email),
   });
 }
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (email: string) => authService.forgotPassword(email),
+  });
+}
+
+export function useVerifyOtp() {
+  return useMutation({
+    mutationFn: (payload: { email: string; otp: string }) =>
+      authService.verifyOtp(payload),
+  });
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (payload: { email: string; otp: string; newPassword: string }) =>
+      authService.resetPassword(payload),
+  });
+}
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: (payload: { oldPassword: string; newPassword: string }) =>
+      authService.changePassword(payload),
+  });
+}
+
+export function useGoogleOAuth() {
+  return useMutation({
+    mutationFn: (payload: { idToken: string } | string) =>
+      authService.googleOAuth(payload),
+  });
+}
+export const UseGoogleOAuth = useGoogleOAuth;
+
+export function useLogOut() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => authService.logout(),
+    onSuccess: () => {
+      queryClient.clear();
+    },
+  });
+}
+export const UseLogOut = useLogOut;
+
+export function useGetMe() {
+  return useQuery({
+    queryKey: ["user-me"],
+    queryFn: async () => {
+      const { data } = await apiClient.get<IApiResponse<IUser>>(
+        API_ENDPOINTS.USERS.ME
+      );
+      return data;
+    },
+    retry: false,
+  });
+}
+export const UseGetMe = useGetMe;
