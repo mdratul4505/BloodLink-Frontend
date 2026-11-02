@@ -31,11 +31,6 @@ export interface AuthResponseData {
 export interface GoogleAuthPayload {
   idToken?: string;
   credential?: string;
-  token?: string;
-  googleId?: string;
-  email?: string;
-  name?: string;
-  avatar?: string;
 }
 
 export const authService = {
