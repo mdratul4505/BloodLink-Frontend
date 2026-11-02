@@ -3,6 +3,7 @@ import {
   authService,
   LoginPayload,
   RegisterPayload,
+  GoogleAuthPayload,
 } from "@/services/auth.service";
 import apiClient from "@/lib/api/axios";
 import { API_ENDPOINTS } from "@/lib/api/endpoints";
@@ -64,7 +65,7 @@ export function useChangePassword() {
 
 export function useGoogleOAuth() {
   return useMutation({
-    mutationFn: (payload: { idToken: string } | string) =>
+    mutationFn: (payload: GoogleAuthPayload | string) =>
       authService.googleOAuth(payload),
   });
 }

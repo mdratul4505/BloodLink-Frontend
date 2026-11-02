@@ -28,6 +28,16 @@ export interface AuthResponseData {
   user: IUser;
 }
 
+export interface GoogleAuthPayload {
+  idToken?: string;
+  credential?: string;
+  token?: string;
+  googleId?: string;
+  email?: string;
+  name?: string;
+  avatar?: string;
+}
+
 export const authService = {
   login: async (payload: LoginPayload) => {
     const { data } = await apiClient.post<IApiResponse<AuthResponseData>>(
@@ -118,11 +128,11 @@ export const authService = {
     return data;
   },
 
-  googleOAuth: async (payload: { idToken: string } | string) => {
-    const idToken = typeof payload === "string" ? payload : payload.idToken;
+  googleOAuth: async (payload: GoogleAuthPayload | string) => {
+    const body = typeof payload === "string" ? { idToken: payload } : payload;
     const { data } = await apiClient.post<IApiResponse<AuthResponseData>>(
       API_ENDPOINTS.AUTH.GOOGLE,
-      { idToken }
+      body
     );
     if (data.data?.accessToken) {
       localStorage.setItem(ACCESS_TOKEN_KEY, data.data.accessToken);
