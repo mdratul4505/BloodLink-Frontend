@@ -28,9 +28,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/toast";
+import { Separator } from "@/components/ui/separator";
 import { Logo } from "@/components/common/Logo";
 import { ThemeSwitcher } from "@/components/common/ThemeSwitcher";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
+import GoogleLoginComponent from "@/components/modules/google-login/GoogleLogin";
 import { useRegistration } from "@/hooks/auth.hook";
 import { useLanguage } from "@/providers/language.provider";
 import { BloodGroup } from "@/types";
@@ -349,6 +351,22 @@ export default function RegisterPage() {
                   {registerMutation.isPending ? "Creating Account..." : t.auth.registerBtn}
                 </Button>
               </form>
+
+              <div className="relative my-4">
+                <div className="absolute inset-0 flex items-center">
+                  <Separator className="w-full" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-card px-2 text-muted-foreground">
+                    {t.auth.orContinueWith}
+                  </span>
+                </div>
+              </div>
+
+              {/* Google OAuth Register */}
+              <div className="flex justify-center">
+                <GoogleLoginComponent mode="register" redirectUrl="/dashboard/user" />
+              </div>
 
               <div className="text-center text-xs text-muted-foreground pt-2">
                 {t.auth.haveAccount}{" "}

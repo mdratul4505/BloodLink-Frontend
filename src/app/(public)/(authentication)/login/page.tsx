@@ -204,7 +204,7 @@ export default function LoginPage() {
 
               {/* Google OAuth Login */}
               <div className="flex justify-center">
-                <GoogleLoginComponent />
+                <GoogleLoginComponent mode="login" redirectUrl={redirectUrl} />
               </div>
 
               {/* Default Admin Credential Helper Hint */}
