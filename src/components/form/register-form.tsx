@@ -14,9 +14,9 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
-import { patientRegistrationSchema } from "@/validation";
-import z from "zod";
+import { registerSchema } from "@/validation";
 import { useRegistration } from "@/hooks";
 import { toast } from "../ui/toast";
 
@@ -25,56 +25,47 @@ export function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  type PatientDefaultValues = z.infer<typeof patientRegistrationSchema>;
-
-  const defaultValues: PatientDefaultValues = {
-    name: "Mir",
-    email: "mir@gmail.com",
-    contactNumber: "0191234567",
-    password: "@User123456",
-    confirmPassword: "@User123456",
-  };
-
-  const { mutate: registration } = useRegistration();
+  const { mutate: registration, isPending } = useRegistration();
 
   const form = useForm({
-    defaultValues,
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+    },
     validators: {
-      onSubmit: patientRegistrationSchema,
+      onSubmit: registerSchema,
     },
     onSubmit: async ({ value }) => {
       const registrationData = {
-        name: value.name,
-        email: value.email,
+        name: value.name.trim(),
+        email: value.email.trim().toLowerCase(),
         password: value.password,
-        patient: {
-          contactNumber: value.contactNumber,
-        },
+        ...(value.phone?.trim() ? { phone: value.phone.trim() } : {}),
       };
 
       registration(registrationData, {
-        onSuccess: (res) => {
-          if (!res.success) {
-            toast.add({
-              title: "Server Failure",
-              description: "Something went wrong. Please try again",
-              type: "error",
-            });
-          }
-
+        onSuccess: (res: any) => {
           toast.add({
             title: "Registration Successful",
-            description: "Please verify your account",
+            description:
+              res?.message ||
+              "Please check your email for the 6-digit verification code.",
             type: "success",
           });
           const params = new URLSearchParams({ email: registrationData.email });
-          router.push(`/register/verify-account?${params.toString()}`);
+          router.push(`/verify-account?${params.toString()}`);
         },
-        onError: (err) => {
+        onError: (err: any) => {
+          const errorMessage =
+            err?.data?.message ||
+            err?.message ||
+            "Something went wrong. Please try again.";
           toast.add({
-            title: "Authorization failure",
-            description:
-              err.message || "Something went wrong. Please try again",
+            title: "Registration Failed",
+            description: errorMessage,
             type: "error",
           });
         },
@@ -87,7 +78,7 @@ export function RegisterForm() {
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold tracking-tight">Create an account</h1>
         <p className="text-sm text-muted-foreground">
-          Enter your details below to create your account
+          Enter your details below to register on Blood Link
         </p>
       </div>
 
@@ -106,19 +97,17 @@ export function RegisterForm() {
               return (
                 <Field data-invalid={isInvalid}>
                   <FieldLabel htmlFor={field.name}>Full Name</FieldLabel>
-                  <div className="relative">
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      type="text"
-                      placeholder="John Doe"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      autoComplete="name"
-                    />
-                  </div>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="text"
+                    placeholder="John Doe"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    aria-invalid={isInvalid}
+                    autoComplete="name"
+                  />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
@@ -131,46 +120,44 @@ export function RegisterForm() {
                 field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-                  <div className="relative">
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      type="email"
-                      placeholder="m@example.com"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      autoComplete="off"
-                    />
-                  </div>
+                  <FieldLabel htmlFor={field.name}>Email Address</FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="email"
+                    placeholder="name@example.com"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    aria-invalid={isInvalid}
+                    autoComplete="email"
+                  />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
             }}
           </form.Field>
 
-          <form.Field name="contactNumber">
+          <form.Field name="phone">
             {(field) => {
               const isInvalid =
                 field.state.meta.isTouched && !field.state.meta.isValid;
               return (
                 <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Phone Number</FieldLabel>
-                  <div className="relative">
-                    <Input
-                      id={field.name}
-                      name={field.name}
-                      type="tel"
-                      placeholder="+880 1712 345678"
-                      value={field.state.value}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      aria-invalid={isInvalid}
-                      autoComplete="off"
-                    />
-                  </div>
+                  <FieldLabel htmlFor={field.name}>
+                    Phone Number (Optional)
+                  </FieldLabel>
+                  <Input
+                    id={field.name}
+                    name={field.name}
+                    type="tel"
+                    placeholder="01712345678"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    aria-invalid={isInvalid}
+                    autoComplete="tel"
+                  />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
               );
@@ -190,13 +177,13 @@ export function RegisterForm() {
                       id={field.name}
                       name={field.name}
                       type={showPassword ? "text" : "password"}
-                      placeholder="*********"
+                      placeholder="At least 6 characters"
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                       aria-invalid={isInvalid}
                       className="pr-10"
-                      autoComplete="off"
+                      autoComplete="new-password"
                     />
                     <button
                       type="button"
@@ -231,13 +218,13 @@ export function RegisterForm() {
                       id={field.name}
                       name={field.name}
                       type={showConfirmPassword ? "text" : "password"}
-                      placeholder="*********"
+                      placeholder="Repeat password"
                       value={field.state.value}
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                       aria-invalid={isInvalid}
                       className="pr-10"
-                      autoComplete="off"
+                      autoComplete="new-password"
                     />
                     <button
                       type="button"
@@ -262,13 +249,23 @@ export function RegisterForm() {
             }}
           </form.Field>
 
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isPending} className="w-full">
+            {isPending ? (
+              <>
+                <Spinner /> Creating account...
+              </>
+            ) : (
+              "Sign Up"
+            )}
+          </Button>
         </FieldGroup>
       </form>
 
       <FieldSeparator>Or continue with</FieldSeparator>
 
-      <GoogleLoginComponent />
+      <div className="flex justify-center">
+        <GoogleLoginComponent />
+      </div>
 
       <div className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
