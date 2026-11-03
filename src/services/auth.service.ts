@@ -9,6 +9,7 @@ import { IApiResponse, IUser } from "@/types";
 export interface LoginPayload {
   email: string;
   password: string;
+  otp?: string;
 }
 
 export interface RegisterPayload {
@@ -23,9 +24,12 @@ export interface RegisterPayload {
 }
 
 export interface AuthResponseData {
-  accessToken: string;
+  accessToken?: string;
   refreshToken?: string;
-  user: IUser;
+  user?: IUser;
+  requiresOtp?: boolean;
+  email?: string;
+  message?: string;
 }
 
 export interface GoogleAuthPayload {
