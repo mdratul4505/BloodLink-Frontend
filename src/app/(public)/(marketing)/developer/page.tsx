@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "motion/react";
 import {
   Code2,
@@ -69,7 +70,7 @@ export default function DeveloperPage() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-red-500/10 dark:bg-red-500/15 rounded-full blur-3xl pointer-events-none" />
 
           <div className="relative z-10 flex flex-col md:flex-row items-center gap-8 lg:gap-12 text-center md:text-left">
-            {/* Developer Avatar Placeholder */}
+            {/* Developer Avatar */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -77,13 +78,14 @@ export default function DeveloperPage() {
               className="relative shrink-0"
             >
               <div className="size-36 sm:size-44 rounded-3xl bg-gradient-to-br from-red-600 to-rose-700 p-1 shadow-2xl">
-                <div className="w-full h-full rounded-[22px] bg-card flex flex-col items-center justify-center text-primary relative overflow-hidden">
-                  <div className="size-20 rounded-2xl bg-primary/10 flex items-center justify-center font-black text-3xl">
-                    RH
-                  </div>
-                  <span className="text-[11px] font-bold text-muted-foreground mt-2 tracking-wider uppercase">
-                    Developer
-                  </span>
+                <div className="w-full h-full rounded-[22px] bg-card relative overflow-hidden">
+                  <Image
+                    src="/admin.jpg"
+                    alt="MD. Ratul Hasan - Developer"
+                    fill
+                    className="object-cover object-top rounded-[22px]"
+                    priority
+                  />
                 </div>
               </div>
               <Badge className="absolute -bottom-2 right-2 bg-emerald-600 text-white font-bold text-[10px] px-2.5 py-0.5 shadow-sm">

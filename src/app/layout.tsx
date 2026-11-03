@@ -8,7 +8,12 @@ export const metadata: Metadata = {
   title: "BloodLink — Every Drop Connects a Life",
   description: "Automated Blood Donation & Emergency Coordination Platform. Connect voluntary blood donors, patients, hospitals, and blood banks.",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/logo.jpg", type: "image/jpeg" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: "/logo.jpg",
+    apple: "/logo.jpg",
   },
 };
 
