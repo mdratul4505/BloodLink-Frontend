@@ -21,6 +21,11 @@ import { toast } from "@/components/ui/toast";
 import { bloodRequestService } from "@/services";
 import { useAuth } from "@/providers/auth.provider";
 import { BloodGroup } from "@/types";
+import {
+  BANGLADESH_DIVISIONS,
+  getDistrictsByDivision,
+  ALL_DISTRICTS,
+} from "@/constants/bangladesh-locations";
 
 const BLOOD_GROUPS: { value: BloodGroup; label: string }[] = [
   { value: "A_POSITIVE", label: "A Positive (A+)" },
@@ -33,22 +38,6 @@ const BLOOD_GROUPS: { value: BloodGroup; label: string }[] = [
   { value: "O_NEGATIVE", label: "O Negative (O-)" },
 ];
 
-const DISTRICTS = [
-  "Dhaka",
-  "Chattogram",
-  "Rajshahi",
-  "Khulna",
-  "Barishal",
-  "Sylhet",
-  "Rangpur",
-  "Mymensingh",
-  "Comilla",
-  "Satkhira",
-  "Gazipur",
-  "Narayanganj",
-  "Bogura",
-];
-
 export default function CreateBloodRequestPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -58,6 +47,7 @@ export default function CreateBloodRequestPage() {
   const [bloodGroup, setBloodGroup] = useState<BloodGroup | "">("");
   const [units, setUnits] = useState(1);
   const [hospitalName, setHospitalName] = useState("");
+  const [division, setDivision] = useState("");
   const [district, setDistrict] = useState("");
   const [upazila, setUpazila] = useState("");
   const [contactPhone, setContactPhone] = useState("");
@@ -65,6 +55,8 @@ export default function CreateBloodRequestPage() {
   const [urgency, setUrgency] = useState<"NORMAL" | "URGENT" | "CRITICAL">("NORMAL");
   const [note, setNote] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  const availableDistricts = division ? getDistrictsByDivision(division) : ALL_DISTRICTS;
 
   const createMutation = useMutation({
     mutationFn: bloodRequestService.createRequest,
@@ -241,17 +233,49 @@ export default function CreateBloodRequestPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="division" className="text-xs font-bold">
+                    Division *
+                  </Label>
+                  <Select
+                    value={division}
+                    onValueChange={(val) => {
+                      if (val) {
+                        setDivision(val);
+                        setDistrict("");
+                      }
+                    }}
+                  >
+                    <SelectTrigger id="division" className="w-full">
+                      <SelectValue placeholder="Select Division" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BANGLADESH_DIVISIONS.map((div) => (
+                        <SelectItem key={div} value={div}>
+                          {div}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="space-y-1.5">
                   <Label htmlFor="district" className="text-xs font-bold">
                     District *
                   </Label>
-                  <Select value={district} onValueChange={(val) => val && setDistrict(val)}>
+                  <Select
+                    value={district}
+                    onValueChange={(val) => val && setDistrict(val)}
+                    disabled={!division}
+                  >
                     <SelectTrigger id="district" className="w-full">
-                      <SelectValue placeholder="Select District" />
+                      <SelectValue
+                        placeholder={division ? "Select District" : "Select Division first"}
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      {DISTRICTS.map((dst) => (
+                      {availableDistricts.map((dst) => (
                         <SelectItem key={dst} value={dst}>
                           {dst}
                         </SelectItem>

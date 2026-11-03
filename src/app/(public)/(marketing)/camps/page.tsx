@@ -26,22 +26,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { campService } from "@/services";
 import { useLanguage } from "@/providers/language.provider";
-
-const DISTRICTS = [
-  "Dhaka",
-  "Chattogram",
-  "Rajshahi",
-  "Khulna",
-  "Barishal",
-  "Sylhet",
-  "Rangpur",
-  "Mymensingh",
-  "Comilla",
-  "Satkhira",
-  "Gazipur",
-  "Narayanganj",
-  "Bogura",
-];
+import { ALL_DISTRICTS } from "@/constants/bangladesh-locations";
 
 export default function CampsPage() {
   const { t } = useLanguage();
@@ -100,7 +85,7 @@ export default function CampsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="ALL">{t.common.all} Districts</SelectItem>
-                    {DISTRICTS.map((dst) => (
+                    {ALL_DISTRICTS.map((dst) => (
                       <SelectItem key={dst} value={dst}>
                         {dst}
                       </SelectItem>

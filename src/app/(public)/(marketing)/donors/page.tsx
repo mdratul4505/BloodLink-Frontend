@@ -33,6 +33,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { donorService } from "@/services";
 import { useLanguage } from "@/providers/language.provider";
 import { BloodGroup } from "@/types";
+import {
+  BANGLADESH_DIVISIONS,
+  ALL_DISTRICTS,
+  getDistrictsByDivision,
+} from "@/constants/bangladesh-locations";
 
 const BLOOD_GROUPS: { value: BloodGroup; label: string }[] = [
   { value: "A_POSITIVE", label: "A Positive (A+)" },
@@ -45,29 +50,17 @@ const BLOOD_GROUPS: { value: BloodGroup; label: string }[] = [
   { value: "O_NEGATIVE", label: "O Negative (O-)" },
 ];
 
-const DISTRICTS = [
-  "Dhaka",
-  "Chattogram",
-  "Rajshahi",
-  "Khulna",
-  "Barishal",
-  "Sylhet",
-  "Rangpur",
-  "Mymensingh",
-  "Comilla",
-  "Satkhira",
-  "Gazipur",
-  "Narayanganj",
-  "Bogura",
-];
-
 export default function DonorsPage() {
   const { t } = useLanguage();
   const [bloodGroup, setBloodGroup] = useState<string>("ALL");
+  const [division, setDivision] = useState<string>("ALL");
   const [district, setDistrict] = useState<string>("ALL");
   const [availableOnly, setAvailableOnly] = useState(false);
   const [page, setPage] = useState(1);
   const limit = 8;
+
+  const availableDistricts =
+    division !== "ALL" ? getDistrictsByDivision(division) : ALL_DISTRICTS;
 
   const { data, isLoading, isPlaceholderData } = useQuery({
     queryKey: ["donors-list", bloodGroup, district, availableOnly, page],
@@ -119,7 +112,7 @@ export default function DonorsPage() {
         {/* Filters Card */}
         <Card className="border border-border shadow-xs">
           <CardContent className="p-4 sm:p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
               <div>
                 <Label className="text-xs font-semibold text-muted-foreground mb-1.5 block">
                   {t.common.bloodGroup}
@@ -149,6 +142,34 @@ export default function DonorsPage() {
 
               <div>
                 <Label className="text-xs font-semibold text-muted-foreground mb-1.5 block">
+                  Division
+                </Label>
+                <Select
+                  value={division}
+                  onValueChange={(val) => {
+                    if (val) {
+                      setDivision(val);
+                      setDistrict("ALL");
+                      setPage(1);
+                    }
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="All Divisions" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ALL">All Divisions</SelectItem>
+                    {BANGLADESH_DIVISIONS.map((div) => (
+                      <SelectItem key={div} value={div}>
+                        {div}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label className="text-xs font-semibold text-muted-foreground mb-1.5 block">
                   {t.common.district}
                 </Label>
                 <Select
@@ -165,7 +186,7 @@ export default function DonorsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="ALL">{t.common.all} Districts</SelectItem>
-                    {DISTRICTS.map((dst) => (
+                    {availableDistricts.map((dst) => (
                       <SelectItem key={dst} value={dst}>
                         {dst}
                       </SelectItem>

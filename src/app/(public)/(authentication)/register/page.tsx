@@ -36,6 +36,10 @@ import GoogleLoginComponent from "@/components/modules/google-login/GoogleLogin"
 import { useRegistration } from "@/hooks/auth.hook";
 import { useLanguage } from "@/providers/language.provider";
 import { BloodGroup } from "@/types";
+import {
+  BANGLADESH_DIVISIONS,
+  getDistrictsByDivision,
+} from "@/constants/bangladesh-locations";
 
 const BLOOD_GROUPS: { value: BloodGroup; label: string }[] = [
   { value: "A_POSITIVE", label: "A Positive (A+)" },
@@ -46,22 +50,6 @@ const BLOOD_GROUPS: { value: BloodGroup; label: string }[] = [
   { value: "AB_NEGATIVE", label: "AB Negative (AB-)" },
   { value: "O_POSITIVE", label: "O Positive (O+)" },
   { value: "O_NEGATIVE", label: "O Negative (O-)" },
-];
-
-const DISTRICTS = [
-  "Dhaka",
-  "Chattogram",
-  "Rajshahi",
-  "Khulna",
-  "Barishal",
-  "Sylhet",
-  "Rangpur",
-  "Mymensingh",
-  "Comilla",
-  "Satkhira",
-  "Gazipur",
-  "Narayanganj",
-  "Bogura",
 ];
 
 export default function RegisterPage() {
@@ -75,10 +63,13 @@ export default function RegisterPage() {
   const [phone, setPhone] = useState("");
   const [isDonor, setIsDonor] = useState(true);
   const [bloodGroup, setBloodGroup] = useState<BloodGroup | "">("");
+  const [division, setDivision] = useState("");
   const [district, setDistrict] = useState("");
   const [upazila, setUpazila] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  const availableDistricts = division ? getDistrictsByDivision(division) : [];
 
   const registerMutation = useRegistration();
 
@@ -104,6 +95,10 @@ export default function RegisterPage() {
     }
     if (isDonor && !bloodGroup) {
       setErrorMsg("Please select your blood group as a registered donor.");
+      return;
+    }
+    if (isDonor && !division) {
+      setErrorMsg("Please select your division.");
       return;
     }
     if (isDonor && !district) {
@@ -288,55 +283,97 @@ export default function RegisterPage() {
                   </div>
 
                   {isDonor && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-                      <div className="space-y-1">
-                        <Label className="text-[11px] font-bold text-muted-foreground">
-                          {t.auth.bloodGroupLabel} *
-                        </Label>
-                        <Select
-                          value={bloodGroup}
-                          onValueChange={(val) => setBloodGroup(val as BloodGroup)}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Group" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {BLOOD_GROUPS.map((bg) => (
-                              <SelectItem key={bg.value} value={bg.value}>
-                                {bg.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                    <div className="space-y-3 pt-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {/* Blood Group */}
+                        <div className="space-y-1">
+                          <Label className="text-[11px] font-bold text-muted-foreground">
+                            {t.auth.bloodGroupLabel} *
+                          </Label>
+                          <Select
+                            value={bloodGroup}
+                            onValueChange={(val) => setBloodGroup(val as BloodGroup)}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select Blood Group" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {BLOOD_GROUPS.map((bg) => (
+                                <SelectItem key={bg.value} value={bg.value}>
+                                  {bg.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Division (8 Divisions of Bangladesh) */}
+                        <div className="space-y-1">
+                          <Label className="text-[11px] font-bold text-muted-foreground">
+                            {t.auth.divisionLabel} (8 Divisions) *
+                          </Label>
+                          <Select
+                            value={division}
+                            onValueChange={(val) => {
+                              if (val) {
+                                setDivision(val);
+                                setDistrict(""); // Reset district when division changes
+                              }
+                            }}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select Division" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {BANGLADESH_DIVISIONS.map((div) => (
+                                <SelectItem key={div} value={div}>
+                                  {div}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
 
-                      <div className="space-y-1">
-                        <Label className="text-[11px] font-bold text-muted-foreground">
-                          {t.auth.districtLabel} *
-                        </Label>
-                        <Select value={district} onValueChange={(val) => val && setDistrict(val)}>
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="District" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {DISTRICTS.map((dst) => (
-                              <SelectItem key={dst} value={dst}>
-                                {dst}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {/* District (Dynamically loaded based on Division) */}
+                        <div className="space-y-1">
+                          <Label className="text-[11px] font-bold text-muted-foreground">
+                            {t.auth.districtLabel} *
+                          </Label>
+                          <Select
+                            value={district}
+                            onValueChange={(val) => val && setDistrict(val)}
+                            disabled={!division}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue
+                                placeholder={
+                                  division ? "Select District" : "Select Division first"
+                                }
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableDistricts.map((dst) => (
+                                <SelectItem key={dst} value={dst}>
+                                  {dst}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                      <div className="space-y-1">
-                        <Label className="text-[11px] font-bold text-muted-foreground">
-                          Upazila (Opt)
-                        </Label>
-                        <Input
-                          placeholder="Upazila"
-                          value={upazila}
-                          onChange={(e) => setUpazila(e.target.value)}
-                        />
+                        {/* Upazila (Manual Text Input by User) */}
+                        <div className="space-y-1">
+                          <Label className="text-[11px] font-bold text-muted-foreground">
+                            {t.auth.upazilaLabel}
+                          </Label>
+                          <Input
+                            placeholder="Type your Upazila / Area"
+                            value={upazila}
+                            onChange={(e) => setUpazila(e.target.value)}
+                          />
+                        </div>
                       </div>
                     </div>
                   )}

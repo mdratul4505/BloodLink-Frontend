@@ -19,22 +19,11 @@ import {
 import { toast } from "@/components/ui/toast";
 import { organizationService } from "@/services";
 import { useAuth } from "@/providers/auth.provider";
-
-const DISTRICTS = [
-  "Dhaka",
-  "Chattogram",
-  "Rajshahi",
-  "Khulna",
-  "Barishal",
-  "Sylhet",
-  "Rangpur",
-  "Mymensingh",
-  "Comilla",
-  "Satkhira",
-  "Gazipur",
-  "Narayanganj",
-  "Bogura",
-];
+import {
+  BANGLADESH_DIVISIONS,
+  getDistrictsByDivision,
+  ALL_DISTRICTS,
+} from "@/constants/bangladesh-locations";
 
 export default function ApplyOrganizationPage() {
   const router = useRouter();
@@ -44,11 +33,14 @@ export default function ApplyOrganizationPage() {
   const [name, setName] = useState("");
   const [type, setType] = useState<string>("HOSPITAL");
   const [address, setAddress] = useState("");
+  const [division, setDivision] = useState("");
   const [district, setDistrict] = useState("");
   const [upazila, setUpazila] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [email, setEmail] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  const availableDistricts = division ? getDistrictsByDivision(division) : ALL_DISTRICTS;
 
   const applyMutation = useMutation({
     mutationFn: organizationService.createOrganization,
@@ -161,7 +153,7 @@ export default function ApplyOrganizationPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="org-type" className="text-xs font-bold">
                     Organization Type *
@@ -179,15 +171,47 @@ export default function ApplyOrganizationPage() {
                 </div>
 
                 <div className="space-y-1.5">
+                  <Label htmlFor="division" className="text-xs font-bold">
+                    Division *
+                  </Label>
+                  <Select
+                    value={division}
+                    onValueChange={(val) => {
+                      if (val) {
+                        setDivision(val);
+                        setDistrict("");
+                      }
+                    }}
+                  >
+                    <SelectTrigger id="division" className="w-full">
+                      <SelectValue placeholder="Select Division" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BANGLADESH_DIVISIONS.map((div) => (
+                        <SelectItem key={div} value={div}>
+                          {div}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5">
                   <Label htmlFor="district" className="text-xs font-bold">
                     District *
                   </Label>
-                  <Select value={district} onValueChange={(val) => val && setDistrict(val)}>
+                  <Select
+                    value={district}
+                    onValueChange={(val) => val && setDistrict(val)}
+                    disabled={!division}
+                  >
                     <SelectTrigger id="district" className="w-full">
-                      <SelectValue placeholder="Select District" />
+                      <SelectValue
+                        placeholder={division ? "Select District" : "Select Division first"}
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      {DISTRICTS.map((dst) => (
+                      {availableDistricts.map((dst) => (
                         <SelectItem key={dst} value={dst}>
                           {dst}
                         </SelectItem>

@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { donorService } from "@/services";
 import { useLanguage } from "@/providers/language.provider";
 import { BloodGroup } from "@/types";
+import { ALL_DISTRICTS } from "@/constants/bangladesh-locations";
 
 const BLOOD_GROUPS: { value: BloodGroup; label: string }[] = [
   { value: "A_POSITIVE", label: "A Positive (A+)" },
@@ -29,22 +30,6 @@ const BLOOD_GROUPS: { value: BloodGroup; label: string }[] = [
   { value: "AB_NEGATIVE", label: "AB Negative (AB-)" },
   { value: "O_POSITIVE", label: "O Positive (O+)" },
   { value: "O_NEGATIVE", label: "O Negative (O-)" },
-];
-
-const DISTRICTS = [
-  "Dhaka",
-  "Chattogram",
-  "Rajshahi",
-  "Khulna",
-  "Barishal",
-  "Sylhet",
-  "Rangpur",
-  "Mymensingh",
-  "Comilla",
-  "Satkhira",
-  "Gazipur",
-  "Narayanganj",
-  "Bogura",
 ];
 
 export function FindDonorsSection() {
@@ -129,7 +114,7 @@ export function FindDonorsSection() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="ALL">{t.common.all} Districts</SelectItem>
-                    {DISTRICTS.map((dst) => (
+                    {ALL_DISTRICTS.map((dst) => (
                       <SelectItem key={dst} value={dst}>
                         {dst}
                       </SelectItem>
