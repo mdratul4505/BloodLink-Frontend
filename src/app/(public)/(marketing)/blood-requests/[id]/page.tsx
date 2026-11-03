@@ -165,6 +165,15 @@ export default function BloodRequestDetailPage({
     }
   };
 
+  const getDonorPhone = (resp: any) => {
+    if (resp.donor?.phone) return resp.donor.phone;
+    if (resp.message) {
+      const match = resp.message.match(/(?:01[3-9]\d{8}|\+?8801[3-9]\d{8})/);
+      if (match) return match[0];
+    }
+    return null;
+  };
+
   const handleRespond = () => {
     if (!isAuthenticated) {
       router.push(`/login?redirect=/blood-requests/${id}`);
@@ -179,9 +188,13 @@ export default function BloodRequestDetailPage({
       });
       return;
     }
+    const finalMsg = responseMsg.trim()
+      ? `Contact Phone: ${cleanPhone} | ${responseMsg.trim()}`
+      : `Contact Phone: ${cleanPhone}`;
+
     respondMutation.mutate({
       status: responseStatus,
-      message: responseMsg.trim() || undefined,
+      message: finalMsg,
       phone: cleanPhone,
     });
   };
@@ -482,28 +495,31 @@ export default function BloodRequestDetailPage({
                       )}
 
                       {/* Donor Contact Phone Number - Visible to Requester so they can contact immediately */}
-                      {(isRequester || isMyResponse) && (
-                        resp.donor?.phone ? (
-                          <div className="p-3 rounded-xl bg-primary/5 dark:bg-primary/10 border border-primary/20 flex flex-wrap items-center justify-between gap-2 text-xs">
-                            <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
-                              <Phone className="size-3.5 text-primary" />
-                              <span>Donor Contact Phone:</span>
-                            </span>
-                            <a
-                              href={`tel:${resp.donor.phone}`}
-                              className="font-bold text-sm text-primary hover:underline flex items-center gap-1.5 bg-background px-3 py-1 rounded-lg border border-border shadow-2xs"
-                            >
-                              <PhoneCall className="size-3.5 text-emerald-600" />
-                              <span>{resp.donor.phone}</span>
-                            </a>
-                          </div>
-                        ) : (
-                          <div className="p-2 text-[11px] text-muted-foreground italic flex items-center gap-1.5">
-                            <Phone className="size-3 text-muted-foreground/60" />
-                            <span>Contact: {resp.donor?.email || "No phone listed in profile"}</span>
-                          </div>
-                        )
-                      )}
+                      {(() => {
+                        const donorPhone = getDonorPhone(resp);
+                        return (isRequester || isMyResponse) && (
+                          donorPhone ? (
+                            <div className="p-3 rounded-xl bg-primary/5 dark:bg-primary/10 border border-primary/20 flex flex-wrap items-center justify-between gap-2 text-xs">
+                              <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
+                                <Phone className="size-3.5 text-primary" />
+                                <span>Donor Contact Phone:</span>
+                              </span>
+                              <a
+                                href={`tel:${donorPhone}`}
+                                className="font-bold text-sm text-primary hover:underline flex items-center gap-1.5 bg-background px-3 py-1 rounded-lg border border-border shadow-2xs"
+                              >
+                                <PhoneCall className="size-3.5 text-emerald-600" />
+                                <span>{donorPhone}</span>
+                              </a>
+                            </div>
+                          ) : (
+                            <div className="p-2 text-[11px] text-muted-foreground italic flex items-center gap-1.5">
+                              <Phone className="size-3 text-muted-foreground/60" />
+                              <span>Contact: {resp.donor?.email || "No phone listed in profile"}</span>
+                            </div>
+                          )
+                        );
+                      })()}
 
                       {/* Requester Action Buttons */}
                       {isRequester && !isFulfilled && (

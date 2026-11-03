@@ -126,19 +126,45 @@ export const bloodRequestService = {
   },
 
   confirmResponse: async (id: string, donorId: string) => {
+    // Try 1: Dedicated confirm response endpoint
     try {
       const { data } = await apiClient.post(
         `/blood-requests/${id}/confirm-response`,
         { donorId }
       );
       return data;
-    } catch {
+    } catch (err: any) {
+      if (err?.response?.status !== 404) throw err;
+    }
+
+    // Try 2: Alternative confirm route
+    try {
       const { data } = await apiClient.patch(
         API_ENDPOINTS.BLOOD_REQUESTS.CONFIRM_RESPONSE(id, donorId),
         { donorId }
       );
       return data;
+    } catch (err: any) {
+      if (err?.response?.status !== 404) throw err;
     }
+
+    // Try 3: Live deployed backend complete-donation fallback (marks request FULFILLED)
+    try {
+      const { data } = await apiClient.post(
+        API_ENDPOINTS.BLOOD_REQUESTS.COMPLETE_DONATION(id),
+        { donorId, units: 1 }
+      );
+      return data;
+    } catch (err: any) {
+      if (err?.response?.status !== 404) throw err;
+    }
+
+    // Try 4: Live deployed backend direct status update to FULFILLED
+    const { data } = await apiClient.patch(
+      API_ENDPOINTS.BLOOD_REQUESTS.STATUS(id),
+      { status: "FULFILLED" }
+    );
+    return data;
   },
 
   completeDonation: async (
