@@ -40,16 +40,37 @@ export default function AdminOverviewPage() {
     queryFn: () => adminService.getUsers({ limit: 5 }),
   });
 
-  const statsData = stats?.data || {
-    totalUsers: 142,
-    totalDonors: 98,
-    totalRequests: 45,
-    openRequests: 12,
-    totalOrganizations: 18,
-    verifiedOrganizations: 15,
-    totalCamps: 9,
-    totalPaymentsAmount: 18500,
-    totalPaymentsCount: 37,
+  const rawStats = stats?.data as any;
+  const overview = rawStats?.overview || rawStats || {};
+
+  const statsData = {
+    totalUsers: Number(overview.totalUsers ?? rawStats?.totalUsers ?? 0),
+    totalDonors: Number(overview.totalDonors ?? rawStats?.totalDonors ?? 0),
+    totalRequests: Number(overview.totalRequests ?? rawStats?.totalRequests ?? 0),
+    openRequests: Number(
+      overview.openRequests ??
+        rawStats?.openRequests ??
+        (overview.totalRequests !== undefined && overview.fulfilledRequests !== undefined
+          ? Math.max(0, overview.totalRequests - overview.fulfilledRequests)
+          : 0)
+    ),
+    totalOrganizations: Number(overview.totalOrganizations ?? rawStats?.totalOrganizations ?? 0),
+    verifiedOrganizations: Number(overview.verifiedOrganizations ?? rawStats?.verifiedOrganizations ?? 0),
+    totalCamps: Number(overview.totalCamps ?? rawStats?.totalCamps ?? 0),
+    totalPaymentsAmount: Number(
+      overview.totalCollectedFunds ??
+        overview.totalPaymentsAmount ??
+        rawStats?.totalCollectedFunds ??
+        rawStats?.totalPaymentsAmount ??
+        0
+    ),
+    totalPaymentsCount: Number(
+      overview.totalPaidDonationsCount ??
+        overview.totalPaymentsCount ??
+        rawStats?.totalPaidDonationsCount ??
+        rawStats?.totalPaymentsCount ??
+        0
+    ),
   };
 
   const chartData = [
@@ -96,7 +117,7 @@ export default function AdminOverviewPage() {
               <Users className="size-4 text-primary" />
             </div>
             <p className="text-2xl sm:text-3xl font-black text-foreground">
-              {statsData.totalUsers.toLocaleString()}
+              {(statsData.totalUsers || 0).toLocaleString()}
             </p>
             <p className="text-[11px] text-muted-foreground">Registered on platform</p>
           </CardContent>
@@ -109,7 +130,7 @@ export default function AdminOverviewPage() {
               <Droplet className="size-4 text-red-600 fill-red-600" />
             </div>
             <p className="text-2xl sm:text-3xl font-black text-foreground">
-              {statsData.totalDonors.toLocaleString()}
+              {(statsData.totalDonors || 0).toLocaleString()}
             </p>
             <p className="text-[11px] text-muted-foreground">Verified active donors</p>
           </CardContent>
@@ -122,9 +143,9 @@ export default function AdminOverviewPage() {
               <Activity className="size-4 text-amber-500" />
             </div>
             <p className="text-2xl sm:text-3xl font-black text-foreground">
-              {statsData.totalRequests.toLocaleString()}
+              {(statsData.totalRequests || 0).toLocaleString()}
             </p>
-            <p className="text-[11px] text-muted-foreground">{statsData.openRequests} currently open</p>
+            <p className="text-[11px] text-muted-foreground">{statsData.openRequests || 0} currently open</p>
           </CardContent>
         </Card>
 
