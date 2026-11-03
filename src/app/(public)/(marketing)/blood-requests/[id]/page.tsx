@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useState } from "react";
+import React, { use, useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -34,6 +34,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -56,7 +57,14 @@ export default function BloodRequestDetailPage({
 
   const [responseStatus, setResponseStatus] = useState<"AVAILABLE" | "UNABLE">("AVAILABLE");
   const [responseMsg, setResponseMsg] = useState("");
+  const [contactPhone, setContactPhone] = useState(user?.phone || "");
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  useEffect(() => {
+    if (user?.phone && !contactPhone) {
+      setContactPhone(user.phone);
+    }
+  }, [user?.phone, contactPhone]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["blood-request-detail", id],
@@ -70,18 +78,20 @@ export default function BloodRequestDetailPage({
   });
 
   const respondMutation = useMutation({
-    mutationFn: (payload: { status: "AVAILABLE" | "UNABLE"; message?: string }) =>
+    mutationFn: (payload: { status: "AVAILABLE" | "UNABLE"; message?: string; phone?: string }) =>
       bloodRequestService.respondToRequest(id, payload),
     onSuccess: () => {
       toast.add({
         title: "Response Submitted",
-        description: "Thank you! The requester has been notified.",
+        description: "Thank you! The requester has received your contact number and offer.",
         type: "success",
       });
       setDialogOpen(false);
       setResponseMsg("");
       queryClient.invalidateQueries({ queryKey: ["blood-request-detail", id] });
       queryClient.invalidateQueries({ queryKey: ["blood-request-responses", id] });
+      queryClient.invalidateQueries({ queryKey: ["requests-list"] });
+      queryClient.invalidateQueries({ queryKey: ["home-blood-requests"] });
     },
     onError: (err: any) => {
       toast.add({
@@ -97,11 +107,13 @@ export default function BloodRequestDetailPage({
     onSuccess: () => {
       toast.add({
         title: "Donor Offer Approved! 🩸",
-        description: "The donor has been confirmed and notified. You can now coordinate directly.",
+        description: "The donor has been confirmed and the request is fulfilled (closed from public listings).",
         type: "success",
       });
       queryClient.invalidateQueries({ queryKey: ["blood-request-detail", id] });
       queryClient.invalidateQueries({ queryKey: ["blood-request-responses", id] });
+      queryClient.invalidateQueries({ queryKey: ["requests-list"] });
+      queryClient.invalidateQueries({ queryKey: ["home-blood-requests"] });
       queryClient.invalidateQueries({ queryKey: ["my-blood-requests"] });
     },
     onError: (err: any) => {
@@ -158,9 +170,19 @@ export default function BloodRequestDetailPage({
       router.push(`/login?redirect=/blood-requests/${id}`);
       return;
     }
+    const cleanPhone = contactPhone.trim();
+    if (!cleanPhone || cleanPhone.length < 11) {
+      toast.add({
+        title: "Mobile Number Required",
+        description: "Please enter a valid mobile number (at least 11 digits) so the requester can reach you.",
+        type: "error",
+      });
+      return;
+    }
     respondMutation.mutate({
       status: responseStatus,
       message: responseMsg.trim() || undefined,
+      phone: cleanPhone,
     });
   };
 
@@ -333,6 +355,26 @@ export default function BloodRequestDetailPage({
                             </Label>
                           </div>
                         </RadioGroup>
+                      </div>
+
+                      {/* Mandatory Mobile Number Field */}
+                      <div className="space-y-1.5">
+                        <Label htmlFor="donor-phone" className="text-xs font-bold text-foreground flex items-center justify-between">
+                          <span>Your Mobile Phone Number</span>
+                          <span className="text-destructive font-semibold text-[11px]">* Required</span>
+                        </Label>
+                        <Input
+                          id="donor-phone"
+                          type="tel"
+                          required
+                          placeholder="e.g. 017XXXXXXXX"
+                          value={contactPhone}
+                          onChange={(e) => setContactPhone(e.target.value)}
+                          className="font-medium h-9 text-sm"
+                        />
+                        <p className="text-[11px] text-muted-foreground">
+                          The requester will use this number to contact you immediately.
+                        </p>
                       </div>
 
                       <div className="space-y-1.5">

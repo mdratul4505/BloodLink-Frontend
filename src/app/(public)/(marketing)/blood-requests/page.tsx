@@ -46,7 +46,7 @@ export default function BloodRequestsPage() {
   const { t } = useLanguage();
   const [bloodGroup, setBloodGroup] = useState<string>("ALL");
   const [district, setDistrict] = useState<string>("ALL");
-  const [status, setStatus] = useState<string>("ALL");
+  const [status, setStatus] = useState<string>("OPEN");
   const [urgency, setUrgency] = useState<string>("ALL");
   const [page, setPage] = useState(1);
   const limit = 6;
@@ -85,7 +85,7 @@ export default function BloodRequestsPage() {
   const handleReset = () => {
     setBloodGroup("ALL");
     setDistrict("ALL");
-    setStatus("ALL");
+    setStatus("OPEN");
     setUrgency("ALL");
     setPage(1);
   };

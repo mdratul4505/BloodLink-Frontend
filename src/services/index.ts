@@ -109,7 +109,7 @@ export const bloodRequestService = {
 
   respondToRequest: async (
     id: string,
-    payload: { status: "AVAILABLE" | "UNABLE"; message?: string }
+    payload: { status: "AVAILABLE" | "UNABLE"; message?: string; phone?: string }
   ) => {
     const { data } = await apiClient.post(
       API_ENDPOINTS.BLOOD_REQUESTS.RESPOND(id),
@@ -126,11 +126,19 @@ export const bloodRequestService = {
   },
 
   confirmResponse: async (id: string, donorId: string) => {
-    const { data } = await apiClient.patch(
-      API_ENDPOINTS.BLOOD_REQUESTS.CONFIRM_RESPONSE(id, donorId),
-      { donorId }
-    );
-    return data;
+    try {
+      const { data } = await apiClient.post(
+        `/blood-requests/${id}/confirm-response`,
+        { donorId }
+      );
+      return data;
+    } catch {
+      const { data } = await apiClient.patch(
+        API_ENDPOINTS.BLOOD_REQUESTS.CONFIRM_RESPONSE(id, donorId),
+        { donorId }
+      );
+      return data;
+    }
   },
 
   completeDonation: async (
