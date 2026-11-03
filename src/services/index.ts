@@ -127,7 +127,8 @@ export const bloodRequestService = {
 
   confirmResponse: async (id: string, donorId: string) => {
     const { data } = await apiClient.patch(
-      API_ENDPOINTS.BLOOD_REQUESTS.CONFIRM_RESPONSE(id, donorId)
+      API_ENDPOINTS.BLOOD_REQUESTS.CONFIRM_RESPONSE(id, donorId),
+      { donorId }
     );
     return data;
   },

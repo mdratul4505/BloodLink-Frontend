@@ -439,21 +439,28 @@ export default function BloodRequestDetailPage({
                         </p>
                       )}
 
-                      {/* Revealed Contact for Confirmed Donor / Requester */}
-                      {(isConfirmed || isDonated) && resp.donor?.phone && (
-                        <div className="p-2.5 rounded-lg bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-500/30 flex items-center justify-between text-xs">
-                          <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
-                            <Phone className="size-3.5 text-emerald-600" />
-                            <span>Donor Hotline:</span>
-                          </span>
-                          <a
-                            href={`tel:${resp.donor.phone}`}
-                            className="font-bold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1"
-                          >
-                            <PhoneCall className="size-3" />
-                            <span>{resp.donor.phone}</span>
-                          </a>
-                        </div>
+                      {/* Donor Contact Phone Number - Visible to Requester so they can contact immediately */}
+                      {(isRequester || isMyResponse) && (
+                        resp.donor?.phone ? (
+                          <div className="p-3 rounded-xl bg-primary/5 dark:bg-primary/10 border border-primary/20 flex flex-wrap items-center justify-between gap-2 text-xs">
+                            <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
+                              <Phone className="size-3.5 text-primary" />
+                              <span>Donor Contact Phone:</span>
+                            </span>
+                            <a
+                              href={`tel:${resp.donor.phone}`}
+                              className="font-bold text-sm text-primary hover:underline flex items-center gap-1.5 bg-background px-3 py-1 rounded-lg border border-border shadow-2xs"
+                            >
+                              <PhoneCall className="size-3.5 text-emerald-600" />
+                              <span>{resp.donor.phone}</span>
+                            </a>
+                          </div>
+                        ) : (
+                          <div className="p-2 text-[11px] text-muted-foreground italic flex items-center gap-1.5">
+                            <Phone className="size-3 text-muted-foreground/60" />
+                            <span>Contact: {resp.donor?.email || "No phone listed in profile"}</span>
+                          </div>
+                        )
                       )}
 
                       {/* Requester Action Buttons */}
@@ -462,7 +469,11 @@ export default function BloodRequestDetailPage({
                           {isAvailable && (
                             <Button
                               size="xs"
-                              onClick={() => confirmMutation.mutate(resp.donorId)}
+                              onClick={() =>
+                                confirmMutation.mutate(
+                                  resp.donorId || resp.donor?.id || resp.id
+                                )
+                              }
                               disabled={confirmMutation.isPending}
                               className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1 text-xs font-bold shadow-xs"
                             >
@@ -476,7 +487,7 @@ export default function BloodRequestDetailPage({
                               size="xs"
                               onClick={() =>
                                 completeDonationMutation.mutate({
-                                  donorId: resp.donorId,
+                                  donorId: resp.donorId || resp.donor?.id,
                                   units: 1,
                                 })
                               }

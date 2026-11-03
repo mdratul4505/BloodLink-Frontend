@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { MessageSquare, HeartHandshake, Eye, MapPin, Calendar } from "lucide-react";
+import { MessageSquare, HeartHandshake, Eye, MapPin, Calendar, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -63,7 +63,16 @@ export default function MyResponsesPage() {
                       {resp.request?.hospitalName || "Emergency Request"}
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">
-                      {resp.request?.district || "Bangladesh"}
+                      <p>{resp.request?.district || "Bangladesh"}</p>
+                      {resp.request?.contactPhone && (
+                        <a
+                          href={`tel:${resp.request.contactPhone}`}
+                          className="text-primary hover:underline font-semibold flex items-center gap-1 mt-0.5"
+                        >
+                          <Phone className="size-3" />
+                          <span>{resp.request.contactPhone}</span>
+                        </a>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Badge

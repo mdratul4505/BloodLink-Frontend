@@ -93,7 +93,17 @@ export default function MyRequestsPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <p className="font-bold text-sm text-foreground">{req.hospitalName}</p>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className="font-bold text-sm text-foreground">{req.hospitalName}</p>
+                        {req.responses && req.responses.length > 0 && (
+                          <Badge
+                            variant="outline"
+                            className="border-amber-500 text-amber-600 bg-amber-500/10 text-[10px] font-bold"
+                          >
+                            {req.responses.length} {req.responses.length === 1 ? "Offer" : "Offers"}
+                          </Badge>
+                        )}
+                      </div>
                       <p className="text-xs text-muted-foreground">{req.district}</p>
                     </TableCell>
                     <TableCell className="text-xs font-semibold">
