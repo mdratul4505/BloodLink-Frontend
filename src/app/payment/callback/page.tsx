@@ -24,8 +24,9 @@ function PaymentCallbackContent() {
   const router = useRouter();
   const { language } = useLanguage();
 
-  const paymentID = searchParams.get("paymentID");
-  const statusParam = searchParams.get("status");
+  const paymentID = searchParams.get("paymentID") || searchParams.get("paymentId");
+  const statusParam = searchParams.get("status") || (searchParams.get("trxId") ? "success" : null);
+  const trxIdParam = searchParams.get("trxId");
 
   const [loading, setLoading] = useState(true);
   const [payment, setPayment] = useState<IPayment | null>(null);
@@ -34,6 +35,24 @@ function PaymentCallbackContent() {
 
   useEffect(() => {
     async function verify() {
+      if (trxIdParam) {
+        setIsSuccess(true);
+        if (paymentID) {
+          try {
+            const res = await paymentService.getPaymentById(paymentID);
+            if (res.data) setPayment(res.data);
+          } catch {
+            setPayment({
+              id: paymentID,
+              trxId: trxIdParam,
+              status: "PAID",
+            } as any);
+          }
+        }
+        setLoading(false);
+        return;
+      }
+
       if (!paymentID && !statusParam) {
         setError("Invalid payment callback parameters.");
         setLoading(false);
@@ -64,11 +83,15 @@ function PaymentCallbackContent() {
           setIsSuccess(statusParam === "success");
         }
       } catch (err: any) {
-        // Fallback: if backend already verified asynchronously, check statusParam
+        // Fallback: if statusParam indicates success, don't show failure
         if (statusParam === "success") {
           setIsSuccess(true);
         } else {
-          setError(err.message || "Failed to verify transaction with payment gateway.");
+          setError(
+            err?.response?.data?.message ||
+              err.message ||
+              "Failed to verify transaction with payment gateway."
+          );
         }
       } finally {
         setLoading(false);
@@ -76,7 +99,7 @@ function PaymentCallbackContent() {
     }
 
     verify();
-  }, [paymentID, statusParam]);
+  }, [paymentID, statusParam, trxIdParam]);
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6">

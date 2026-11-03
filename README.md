@@ -1,186 +1,171 @@
-# BloodLink — Blood Donation & Emergency Coordination Platform
+# 🩸 BloodLink — Blood Donation & Emergency Coordination Platform
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/mdratul4505/BloodLink-Frontend/main/public/favicon.ico" alt="BloodLink Logo" width="64" height="64" />
-  <h3>Every Drop Connects a Life</h3>
-  <p>A mission-critical healthcare SaaS application connecting voluntary blood donors, patients, hospitals, and blood banks with automated emergency dispatch.</p>
+  <img src="https://raw.githubusercontent.com/mdratul4505/BloodLink-Frontend/main/public/favicon.ico" alt="BloodLink Logo" width="72" height="72" />
+  <h2>Every Drop Connects a Life</h2>
+  <p>An enterprise-grade, life-saving healthcare web application connecting voluntary blood donors, emergency patients, blood banks, and verified organizations across Bangladesh with automated dispatch, real-time tracking, and bKash financial support.</p>
+
+  <p align="center">
+    <a href="https://bloodlink-frontend.vercel.app"><img src="https://img.shields.io/badge/Frontend%20Live-Vercel-success?style=for-the-badge&logo=vercel" alt="Frontend Live" /></a>
+    <a href="https://blood-link-backend-one.vercel.app/api/v1"><img src="https://img.shields.io/badge/Backend%20Live%20API-Vercel-blue?style=for-the-badge&logo=vercel" alt="Backend Live" /></a>
+    <a href="https://github.com/mdratul4505/BloodLink-Frontend"><img src="https://img.shields.io/badge/Frontend%20Repo-GitHub-181717?style=for-the-badge&logo=github" alt="Frontend GitHub" /></a>
+    <a href="https://github.com/mdratul4505/BloodLink-backend"><img src="https://img.shields.io/badge/Backend%20Repo-GitHub-181717?style=for-the-badge&logo=github" alt="Backend GitHub" /></a>
+  </p>
 </div>
 
 ---
 
-## 🌟 Overview
+## 🌐 Quick Links & Deployments
 
-**BloodLink** is an enterprise-grade, fully responsive blood donation and emergency coordination platform. Built with **Next.js 16 (App Router)**, **TypeScript**, **Tailwind CSS**, and **shadcn/ui**, it integrates seamlessly with an existing 56-endpoint production backend.
-
-The platform provides life-saving capabilities including real-time donor search, emergency blood request broadcasting, organization verification, blood donation camp management, bKash financial support contributions, and multi-role dashboards for donors, organizations, and platform administrators.
+| Resource | URL | Description |
+|---|---|---|
+| 🚀 **Frontend Live URL** | [https://bloodlink-frontend.vercel.app](https://bloodlink-frontend.vercel.app) | Live Production Web Application |
+| ⚡ **Backend Live API** | [https://blood-link-backend-one.vercel.app/api/v1](https://blood-link-backend-one.vercel.app/api/v1) | Production RESTful API on Vercel |
+| 🩺 **Backend Health Check** | [https://blood-link-backend-one.vercel.app/health](https://blood-link-backend-one.vercel.app/health) | API Server Health Status |
+| 💻 **Frontend Repository** | [https://github.com/mdratul4505/BloodLink-Frontend](https://github.com/mdratul4505/BloodLink-Frontend) | Next.js 16 Client Source Code |
+| ⚙️ **Backend Repository** | [https://github.com/mdratul4505/BloodLink-backend](https://github.com/mdratul4505/BloodLink-backend) | Express 5 + Prisma 7 Server Code |
 
 ---
 
-## 🚀 Key Features
+## 🔑 Test Accounts & Demo Credentials
 
-### 1. Public Experience & Marketing
-- **10-Section Home Page**:
-  1. *Hero Section* with headline, CTAs, live counters, and animated badge.
-  2. *Impact Statistics* with animated numbers (donors, fulfilled requests, lives saved).
-  3. *How It Works* interactive step-by-step workflow for donors and patients.
-  4. *Find Blood Donors* quick search preview with blood group selector.
-  5. *Live Emergency Requests* urgency badges, countdown timers, and response action.
-  6. *Verified Organizations & Blood Banks* partner network with verification seals.
-  7. *Upcoming Donation Camps* schedule, venue, and registration links.
-  8. *Why Choose BloodLink* key platform advantages and security highlights.
-  9. *Call to Action Banner* encouraging registration and emergency requests.
-  10. *Enterprise Footer* with quick links, legal documents, emergency hotline, and developer credit.
+| Role | Email | Password | Access Capabilities |
+|---|---|---|---|
+| **Platform Super Admin** | `admin@bloodlink.org` | `Admin@123456` | Overview stats, user suspension/activation, organization approvals, request management, audit logs |
+| **Organization Account** | `org@redcrescent.org` | `Org@123456` | Donation camp creation, blood drive management, donor registration roster |
+| **Standard User / Donor** | `donor@bloodlink.org` | `Donor@123456` | Post emergency blood requests, respond to donate, toggle availability, view receipts |
 
-### 2. Public Directories & Discovery
-- **Donors Directory (`/donors`)**: Filter by blood group, district, upazila, and live availability.
-- **Blood Requests Directory (`/blood-requests`)**: Filter by urgency, status, and location.
-- **Organizations Directory (`/organizations`)**: Verified hospitals, blood banks, and volunteer clubs.
-- **Donation Camps (`/camps`)**: Public blood drive schedule with one-click donor registration.
-- **Emergency SOS Launcher**: Global floating action button (FAB) for instant blood broadcasting.
+---
 
-### 3. Developer Profile (`/developer`)
-- Dedicated portfolio page showcasing **MD. Ratul Hasan**, Diploma Engineer in Computer Science and Technology (Satkhira Polytechnic Institute).
-- Showcases technical competencies (Next.js, React, Node.js, Express, MongoDB, TypeScript, Tailwind CSS, Prisma).
-- Direct GitHub and LinkedIn links.
+## 🌟 Platform Overview & Key Features
 
-### 4. Complete Authentication Suite
-- **Sign In (`/login`)**: Email/Password authentication with JWT access and refresh token management.
-- **Sign Up (`/register`)**: Role-based registration with blood group selection.
-- **Email Verification (`/verify-email`, `/verify-account`)**: 6-digit OTP verification.
-- **Password Recovery (`/forgot-password`, `/verify-otp`, `/reset-password`)**: Secure OTP-based reset flow.
+**BloodLink** bridges the critical time gap between blood donors and patients facing medical emergencies, surgeries, thalassemia, or dengue crises across all **8 Divisions and 64 Districts of Bangladesh**.
 
-### 5. Multi-Role Dashboard System
-Powered by the official **shadcn/ui Sidebar** suite with collapsible navigation and breadcrumbs:
-- **User / Donor Dashboard (`/dashboard/user`)**:
-  - Live donor availability toggle (`ACTIVE` / `INACTIVE`).
-  - Personal blood donation history and response timeline.
-  - Active blood requests posted by user.
-  - Notification center with mark-as-read controls.
-  - Contribution history with bKash receipt downloads.
-  - Profile and security settings.
-- **Organization Dashboard (`/dashboard/organization`)**:
-  - Organization profile management and verification status tracking.
-  - Camp management (create camps, schedule dates, monitor donor registrations).
-  - Member management and team role assignments.
-- **Admin Dashboard (`/dashboard/admin`)**:
-  - System-wide metric charts (users, donors, blood requests, total volume).
-  - User management (search, role filtering, instant account suspension/activation).
-  - Organization verification portal (approve/reject with audit feedback).
-  - Blood request management across all districts.
-  - Donation camp approval and status controls.
-  - Payment and donation audit tracking (bKash TrxID, invoice numbers).
-  - System audit logs with JSON payload inspector.
+### 1. 🚨 Emergency Blood Request Workflow
+- **Date Protection**: The requested date (`neededBy`) is strictly restricted to **today or future dates**; past dates are blocked on both UI and backend.
+- **Bangladesh Geolocation Engine**: Dynamic cascading dropdowns for 8 Divisions (Dhaka, Chattogram, Rajshahi, Khulna, Barishal, Sylhet, Rangpur, Mymensingh) and 64 Districts with manual Upazila specification.
+- **Urgency Levels**: Visual indicators for `NORMAL`, `URGENT` (within 24 hours), and `CRITICAL` (immediate surgery/emergency) with pulsing alerts.
+- **Global SOS Launcher**: Persistent Floating Action Button (FAB) for 1-click emergency blood broadcast from any page.
 
-### 6. Global Theme & Localization System
-- **Theme Switcher**: Instant switching between **Light Mode**, **Dark Mode**, and **System Default** powered by `next-themes` and semantic CSS variables.
-- **Language Switcher**: Seamless toggling between **English** and **বাংলা** (Bengali) with persistent localStorage state.
+### 2. 🩸 Smart Donor Coordination & 6-Month Recovery Rule
+- **Mandatory Contact Number**: When a donor responds to donate, a required mobile phone number field ensures the requester can immediately call them.
+- **Direct 1-Click Call Button**: Donor response cards display a prominent, clickable `tel:` button for immediate communication.
+- **6-Month Donor Safety Guard**: Donors who have donated within the last 6 months are automatically excluded from donor search listings until their recovery period elapses.
+- **Approve & Auto-Fulfill**: Once the requester clicks **"Approve & Confirm Donor"**, the request status automatically updates to `FULFILLED`, instantly removing it from the public requests directory and Home Page.
 
-### 7. Payment Gateway Integration
-- Secure **bKash** payment gateway integration for platform support and emergency patient funds.
-- Automatic callback handler (`/payment/callback`) for transaction verification and receipt rendering.
+### 3. 🏢 Organization & Blood Bank Verification
+- **User-to-Organization Application**: Users can apply from their dashboard (`/dashboard/user/apply-organization`) with registration numbers and establishment documents.
+- **Admin Review System**: Administrators review pending applications with 1-click approval that instantly elevates the user role to `ORGANIZATION`.
+- **Donation Camps Management**: Organizations create and manage public blood donation camps with real-time donor registration tracking.
+
+### 4. 💳 bKash Payment Gateway Integration
+- **Voluntary Contributions**: bKash Tokenized Checkout for platform operations and patient emergency funds.
+- **Fail-Safe Callback & Verification**: Instant transaction verification with bKash API without "Transaction Not Found" errors, providing printable receipts and transaction IDs (`trxID`).
+
+### 5. 🔐 Enterprise Authentication & Security
+- **Email OTP Verification**: 6-digit numeric OTP sent via Nodemailer Gmail SMTP for registration, login verification, and password resets.
+- **Dual JWT Tokens**: Access Token (1 Day) + Refresh Token (7 Days) with automated token rotation and logout blacklisting.
+- **Google OAuth Integration**: One-click Google sign-in with server-side token verification.
+
+### 6. 🌐 Modern UI/UX, Themes & Localization
+- **shadcn/ui & Tailwind CSS**: Accessible, clean interface with sleek micro-interactions.
+- **Dark & Light Mode**: Instant toggle between Light, Dark, and System Default themes.
+- **Bilingual Support**: Full English and বাংলা (Bengali) language toggle with persistent state.
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Layer | Technologies |
-|---|---|
-| **Framework** | Next.js 16 (App Router), React 19 |
-| **Language** | TypeScript |
-| **UI Components** | **shadcn/ui** (Base UI & Radix UI accessible primitives) |
-| **Styling** | Tailwind CSS with semantic design tokens |
-| **Icons** | Lucide React |
-| **Animations** | Motion for React (`motion/react`) |
-| **State & Data Fetching** | TanStack React Query v5 |
-| **HTTP Client** | Axios with automated token refresh interceptor |
-| **Theming** | `next-themes` (Class-based dark mode) |
-| **Validation** | Zod |
+### Frontend Architecture
+- **Framework**: Next.js 16.4 (App Router, Server & Client Components)
+- **Library**: React 19
+- **Language**: TypeScript 5.x
+- **Component Suite**: [shadcn/ui](https://ui.shadcn.com/) (Radix UI primitives)
+- **Styling**: Tailwind CSS with CSS Variables design tokens
+- **Data Fetching**: TanStack React Query v5
+- **HTTP Client**: Axios with automated token refresh interceptors
+- **Icons**: Lucide React
+- **Animations**: Motion for React (`motion/react`)
+
+### Backend Architecture
+- **Runtime**: Bun / Node.js 20+
+- **Server Framework**: Express 5.x
+- **Database & ORM**: PostgreSQL via Prisma ORM 7
+- **In-Memory Cache**: Redis (ioredis) with automatic fallback
+- **Authentication**: JWT, bcryptjs, google-auth-library
+- **Email Delivery**: Nodemailer with Gmail SMTP
+- **Payment Gateway**: bKash Tokenized Checkout API v1.2
 
 ---
 
-## 📂 Project Structure
+## 📂 Project Directory Structure
 
 ```
 blood-link-frontend/
 ├── src/
 │   ├── app/
-│   │   ├── (auth)/                  # Login, Register, Forgot/Reset Password
-│   │   ├── (public)/                # Landing page, Donors, Requests, Camps, Orgs, Developer
-│   │   ├── dashboard/               # Multi-role Dashboards
-│   │   │   ├── user/                # Donor / User dashboard
-│   │   │   ├── organization/        # Organization dashboard
-│   │   │   └── admin/               # Platform Administrator dashboard
-│   │   ├── payment/callback/        # bKash Gateway Callback & Receipt
-│   │   ├── globals.css              # Design tokens and theme CSS variables
-│   │   ├── layout.tsx               # Root layout with providers & emergency launcher
-│   │   ├── not-found.tsx            # Custom branded 404 page
-│   │   ├── error.tsx                # Client error boundary
-│   │   ├── loading.tsx              # Root loader animation
-│   │   ├── robots.ts                # SEO robots file
-│   │   └── sitemap.ts               # Dynamic XML sitemap
+│   │   ├── (auth)/                  # Login, Register, Forgot/Reset Password, OTP Verification
+│   │   ├── (public)/                # Home Page, Blood Requests, Donors, Camps, Organizations, Developer
+│   │   ├── dashboard/
+│   │   │   ├── user/                # Donor availability, requests, responses, apply organization
+│   │   │   ├── organization/        # Camps, profiles, donor registrations
+│   │   │   └── admin/               # System stats, users, verify orgs, audit logs, payments
+│   │   ├── payment/
+│   │   │   ├── callback/            # bKash callback handler & digital receipt
+│   │   │   ├── success/             # Success redirect page
+│   │   │   └── failed/              # Failed transaction page
+│   │   ├── layout.tsx               # Root layout with providers & SOS floating button
+│   │   └── globals.css              # Theme CSS variables & design tokens
 │   ├── components/
-│   │   ├── common/                  # Logo, ThemeSwitcher, LanguageSwitcher, EmergencyFAB
-│   │   ├── dashboard/               # AppSidebar, DashboardHeader, NotificationDropdown
+│   │   ├── home/                    # 10 modular landing page sections
+│   │   ├── dashboard/               # AppSidebar, DashboardHeader, NavNotifications
 │   │   ├── layout/                  # Navbar, Footer
 │   │   └── ui/                      # Official shadcn/ui components
-│   ├── lib/
-│   │   ├── api/                     # Axios instance, token interceptors, endpoint mapping
-│   │   └── i18n/                    # English & Bengali translation dictionaries
-│   ├── providers/                   # AuthProvider, LanguageProvider, ThemeProvider, QueryProvider
-│   ├── services/                    # Typed API client services for 56 endpoints
-│   └── types/                       # TypeScript interfaces, enums, and API models
+│   ├── constants/
+│   │   └── bangladesh-locations.ts  # 8 Divisions and 64 Districts database
+│   ├── providers/                   # Auth, Language, Theme, and Query providers
+│   ├── services/                    # Typed API client services
+│   └── types/                       # TypeScript interfaces and enum models
 ```
 
 ---
 
-## ⚙️ Getting Started
+## ⚙️ Local Development Setup
 
-### Prerequisites
-- Node.js 18+ or [Bun](https://bun.sh/) installed.
+### 1. Clone the repositories
+```bash
+# Clone Frontend
+git clone https://github.com/mdratul4505/BloodLink-Frontend.git
+cd BloodLink-Frontend
 
-### Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/mdratul4505/BloodLink-Frontend.git
-   cd BloodLink-Frontend
-   ```
+# Install dependencies
+bun install
+# or: npm install
+```
 
-2. Install dependencies:
-   ```bash
-   bun install
-   # or
-   npm install
-   ```
+### 2. Configure Environment Variables
+Create a `.env.local` file in the root directory:
+```env
+NEXT_PUBLIC_API_BASE_URL=https://blood-link-backend-one.vercel.app/api/v1
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=137918537073-dibo6v1hnvcm0m906e8nnh788akcru88.apps.googleusercontent.com
+```
 
-3. Create `.env.local` in the project root:
-   ```env
-   NEXT_PUBLIC_API_URL=https://blood-link-backend-one.vercel.app/api/v1
-   NEXT_PUBLIC_APP_URL=http://localhost:3000
-   ```
+### 3. Start Development Server
+```bash
+bun run dev
+# or: npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-4. Run the development server:
-   ```bash
-   bun run dev
-   # or
-   npm run dev
-   ```
-
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## 🧪 Production Build
-
-To verify compilation and generate an optimized production bundle:
+### 4. Build for Production
 ```bash
 bun run build
-# or
-npm run build
+# or: npm run build
 ```
 
 ---
 
 ## 📄 License & Attribution
 
-Developed with ❤️ for humanity by **MD. Ratul Hasan**.
-Every Drop Connects a Life.
+Developed with ❤️ for humanity by **MD. Ratul Hasan**.  
+*Every Drop Connects a Life.*
