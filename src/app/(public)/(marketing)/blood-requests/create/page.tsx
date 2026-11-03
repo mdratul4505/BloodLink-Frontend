@@ -56,6 +56,14 @@ export default function CreateBloodRequestPage() {
   const [note, setNote] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  const getTodayDateString = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   const availableDistricts = division ? getDistrictsByDivision(division) : ALL_DISTRICTS;
 
   const createMutation = useMutation({
@@ -118,6 +126,21 @@ export default function CreateBloodRequestPage() {
     }
     if (!neededBy) {
       setErrorMsg("Please specify the date when blood is needed.");
+      return;
+    }
+
+    const selectedDate = new Date(neededBy);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      const msg = "Needed date must be today or a future date. Past dates are not allowed.";
+      setErrorMsg(msg);
+      toast.add({
+        title: "Invalid Date",
+        description: msg,
+        type: "error",
+      });
       return;
     }
 
@@ -318,10 +341,14 @@ export default function CreateBloodRequestPage() {
                   <Input
                     id="neededBy"
                     type="date"
+                    min={getTodayDateString()}
                     value={neededBy}
                     onChange={(e) => setNeededBy(e.target.value)}
                     required
                   />
+                  <p className="text-[11px] text-muted-foreground">
+                    Must be today or a future date. Past dates are not allowed.
+                  </p>
                 </div>
               </div>
 
