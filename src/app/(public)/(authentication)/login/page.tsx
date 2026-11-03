@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Droplet, Eye, EyeOff, Lock, Mail, ArrowRight, AlertCircle, Shield } from "lucide-react";
+import { Droplet, Eye, EyeOff, Lock, Mail, ArrowRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -205,16 +205,6 @@ export default function LoginPage() {
               {/* Google OAuth Login */}
               <div className="flex justify-center">
                 <GoogleLoginComponent mode="login" redirectUrl={redirectUrl} />
-              </div>
-
-              {/* Default Admin Credential Helper Hint */}
-              <div className="p-3 rounded-xl bg-muted/40 border border-border/60 text-[11px] text-muted-foreground space-y-1">
-                <p className="font-semibold text-foreground flex items-center gap-1">
-                  <Shield className="size-3 text-primary" />
-                  <span>Test Admin Credentials:</span>
-                </p>
-                <p>Email: <code className="text-foreground font-mono">admin@bloodlink.org</code></p>
-                <p>Password: <code className="text-foreground font-mono">Admin@123456</code></p>
               </div>
 
               <div className="text-center text-xs text-muted-foreground pt-2">

@@ -4,9 +4,9 @@ import { IApiResponse, INotification } from "@/types";
 
 export const notificationService = {
   getNotifications: async () => {
-    const { data } = await apiClient.get<IApiResponse<INotification[]>>(
-      API_ENDPOINTS.NOTIFICATIONS.LIST
-    );
+    const { data } = await apiClient.get<
+      IApiResponse<{ notifications: INotification[]; unreadCount: number } | INotification[]>
+    >(API_ENDPOINTS.NOTIFICATIONS.LIST);
     return data;
   },
 

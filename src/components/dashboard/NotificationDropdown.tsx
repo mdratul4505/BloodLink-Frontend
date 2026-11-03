@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { notificationService } from "@/services";
-import { NotificationType } from "@/types";
+import { NotificationType, INotification } from "@/types";
 
 export function NotificationDropdown() {
   const queryClient = useQueryClient();
@@ -39,8 +39,16 @@ export function NotificationDropdown() {
     },
   });
 
-  const notifications = data?.data || [];
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const rawData: any = data?.data;
+  const notifications: INotification[] = Array.isArray(rawData)
+    ? rawData
+    : Array.isArray(rawData?.notifications)
+    ? rawData.notifications
+    : [];
+  const unreadCount =
+    typeof rawData?.unreadCount === "number"
+      ? rawData.unreadCount
+      : notifications.filter((n) => !n.isRead).length;
 
   const getIcon = (type: NotificationType) => {
     switch (type) {

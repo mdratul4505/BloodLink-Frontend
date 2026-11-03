@@ -59,7 +59,7 @@ export default function GoogleLoginComponent({
           } else if (user?.role === "ORGANIZATION" || user?.role === "HOSPITAL") {
             router.push("/dashboard/organization");
           } else {
-            router.push("/dashboard");
+            router.push("/dashboard/user");
           }
         },
         onError: (err: any) => {
@@ -85,12 +85,23 @@ export default function GoogleLoginComponent({
     });
   };
 
+  const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID?.trim();
+  const isGoogleConfigured = Boolean(
+    clientId &&
+      !clientId.includes("placeholder") &&
+      !clientId.includes("your_google_client_id")
+  );
+
+  if (!isGoogleConfigured) {
+    return null;
+  }
+
   return (
     <div className="flex w-full items-center justify-center">
       <GoogleLogin
         theme="outline"
         shape="pill"
-        text="continue_with"
+        text={mode === "register" ? "signup_with" : "continue_with"}
         width="100%"
         onSuccess={handleGoogleSuccess}
         onError={handleGoogleError}
