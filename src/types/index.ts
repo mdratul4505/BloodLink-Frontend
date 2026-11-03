@@ -75,6 +75,8 @@ export interface IUser {
   createdAt: string;
   updatedAt: string;
   donorProfile?: IDonorProfile | null;
+  ownedOrganizations?: IOrganization[];
+  organizationMembers?: IOrganizationMember[];
 }
 
 export interface IDonorProfile {

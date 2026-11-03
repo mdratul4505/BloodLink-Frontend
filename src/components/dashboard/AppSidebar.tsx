@@ -54,6 +54,7 @@ export function AppSidebar() {
     { href: "/dashboard/user/availability", label: t.dashboard.myAvailability, icon: Activity },
     { href: "/dashboard/user/requests", label: t.dashboard.myRequests, icon: Droplet },
     { href: "/dashboard/user/responses", label: t.dashboard.myResponses, icon: MessageSquare },
+    { href: "/dashboard/user/apply-organization", label: t.dashboard.applyOrganization, icon: Building2 },
     { href: "/dashboard/user/notifications", label: t.dashboard.notifications, icon: Bell },
     { href: "/dashboard/user/payments", label: t.dashboard.payments, icon: CreditCard },
     { href: "/dashboard/user/change-password", label: t.dashboard.changePassword, icon: KeyRound },

@@ -15,6 +15,7 @@ import {
   CheckCircle2,
   Clock,
   Sparkles,
+  Building2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -250,6 +251,34 @@ export default function UserOverviewPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Organization Application Promotion Card */}
+      {user?.role === "USER" && (
+        <Card className="border border-border bg-gradient-to-r from-blue-50/50 via-sky-50/30 to-background dark:from-blue-950/20 dark:via-sky-950/10 dark:to-background shadow-xs">
+          <CardContent className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="size-12 rounded-2xl bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0">
+                <Building2 className="size-6" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-bold text-sm sm:text-base text-foreground">
+                  Represent a Hospital, Blood Bank or Volunteer Group?
+                </h4>
+                <p className="text-xs text-muted-foreground">
+                  Apply for Organization status to organize mobile blood donation camps and coordinate emergency supplies.
+                </p>
+              </div>
+            </div>
+
+            <Link href="/dashboard/user/apply-organization" className="shrink-0">
+              <Button className="gap-2 font-bold text-xs bg-blue-600 hover:bg-blue-700 text-white shadow-xs">
+                <span>Apply as Organization</span>
+                <ArrowRight className="size-3.5" />
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

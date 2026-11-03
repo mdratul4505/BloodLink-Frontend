@@ -76,8 +76,13 @@ export default function AdminVerifyOrgsPage() {
               ) : orgs.length > 0 ? (
                 orgs.map((org) => (
                   <TableRow key={org.id}>
-                    <TableCell className="font-bold text-sm text-foreground">
-                      {org.name}
+                    <TableCell>
+                      <div className="font-bold text-sm text-foreground">{org.name}</div>
+                      {org.owner && (
+                        <div className="text-[11px] text-muted-foreground font-normal">
+                          Applicant: {org.owner.name} ({org.owner.email})
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-[10px] uppercase font-bold">
