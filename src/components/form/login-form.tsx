@@ -42,13 +42,20 @@ export default function LoginForm() {
       };
 
       login(loginData, {
-        onSuccess: (res) => {
+        onSuccess: (res: any) => {
           toast.add({
             title: "Login Success",
             description: "Welcome back",
             type: "success",
           });
-          router.push("/");
+          const user = res?.data?.user;
+          if (user?.role === "ADMIN") {
+            router.push("/dashboard/admin");
+          } else if (user?.role === "ORGANIZATION" || user?.role === "HOSPITAL") {
+            router.push("/dashboard/organization");
+          } else {
+            router.push("/dashboard/user");
+          }
         },
         onError: (err) => {
           toast.add({

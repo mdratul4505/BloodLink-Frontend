@@ -58,7 +58,12 @@ export default function UserOverviewPage() {
     queryFn: bloodRequestService.getMyRequests,
   });
 
-  const myRequests = myRequestsData?.data || [];
+  const rawRequests = myRequestsData?.data as any;
+  const myRequests: any[] = Array.isArray(rawRequests)
+    ? rawRequests
+    : Array.isArray(rawRequests?.requests)
+    ? rawRequests.requests
+    : [];
   const openRequestsCount = myRequests.filter((r) => r.status === "OPEN").length;
 
   const formatBloodGroup = (bg?: string) => {

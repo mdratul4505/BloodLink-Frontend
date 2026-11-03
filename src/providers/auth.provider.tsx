@@ -89,6 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       refreshProfile();
     }
+    setIsLoading(false);
   };
 
   const logout = async () => {

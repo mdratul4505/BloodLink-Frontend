@@ -53,13 +53,16 @@ export default function GlobalError({
             <RefreshCw className="h-4 w-4" />
             <span>Try Again</span>
           </Button>
-          <Link
-            href="/"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-background hover:bg-muted text-foreground h-8 px-3 text-sm font-medium transition-all"
+          <Button
+            variant="outline"
+            onClick={() => {
+              window.location.href = "/";
+            }}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-border bg-background hover:bg-muted text-foreground h-9 px-4 text-sm font-medium transition-all"
           >
             <Home className="h-4 w-4" />
             <span>Return Home</span>
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

@@ -60,7 +60,7 @@ export default function LoginPage() {
           });
 
           // Redirect role appropriately if no explicit redirect
-          if (redirectUrl === "/") {
+          if (!redirectUrl || redirectUrl === "/") {
             if (user?.role === "ADMIN") {
               router.push("/dashboard/admin");
               return;
@@ -69,6 +69,8 @@ export default function LoginPage() {
               router.push("/dashboard/organization");
               return;
             }
+            router.push("/dashboard/user");
+            return;
           }
           router.push(redirectUrl);
         },
