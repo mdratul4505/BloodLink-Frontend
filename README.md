@@ -19,11 +19,9 @@
 
 | Resource | URL | Description |
 |---|---|---|
-| 🚀 **Frontend Live URL** | [https://bloodlink-frontend.vercel.app](https://bloodlink-frontend.vercel.app) | Live Production Web Application |
-| ⚡ **Backend Live API** | [https://blood-link-backend-one.vercel.app/api/v1](https://blood-link-backend-one.vercel.app/api/v1) | Production RESTful API on Vercel |
-| 🩺 **Backend Health Check** | [https://blood-link-backend-one.vercel.app/health](https://blood-link-backend-one.vercel.app/health) | API Server Health Status |
-| 💻 **Frontend Repository** | [https://github.com/mdratul4505/BloodLink-Frontend](https://github.com/mdratul4505/BloodLink-Frontend) | Next.js 16 Client Source Code |
-| ⚙️ **Backend Repository** | [https://github.com/mdratul4505/BloodLink-backend](https://github.com/mdratul4505/BloodLink-backend) | Express 5 + Prisma 7 Server Code |
+| 🚀 **Frontend Live URL** | [https://blood-link-frontend-iota.vercel.app](https://bloodlink-frontend.vercel.app) | Live Production Web Application |
+| 💻 **Frontend Repository** | [https://github.com/mdratul4505/BloodLink-Frontend.git](https://github.com/mdratul4505/BloodLink-Frontend) | Next.js 16 Client Source Code |
+| ⚙️ **Backend Repository** | [https://github.com/mdratul4505/BloodLink-backend.git](https://github.com/mdratul4505/BloodLink-backend) | Express 5 + Prisma 7 Server Code |
 
 ---
 
@@ -32,8 +30,7 @@
 | Role | Email | Password | Access Capabilities |
 |---|---|---|---|
 | **Platform Super Admin** | `admin@bloodlink.org` | `Admin@123456` | Overview stats, user suspension/activation, organization approvals, request management, audit logs |
-| **Organization Account** | `org@redcrescent.org` | `Org@123456` | Donation camp creation, blood drive management, donor registration roster |
-| **Standard User / Donor** | `donor@bloodlink.org` | `Donor@123456` | Post emergency blood requests, respond to donate, toggle availability, view receipts |
+
 
 ---
 
