@@ -70,13 +70,19 @@ export default function MyResponsesPage() {
                         variant="outline"
                         className={
                           resp.status === "DONATED"
+                            ? "bg-blue-600 text-white font-bold text-[10px]"
+                            : resp.status === "CONFIRMED"
                             ? "bg-emerald-600 text-white font-bold text-[10px]"
                             : resp.status === "AVAILABLE"
-                            ? "border-emerald-500 text-emerald-600 font-bold text-[10px]"
+                            ? "border-amber-500 text-amber-600 dark:text-amber-400 font-bold text-[10px]"
                             : "text-muted-foreground text-[10px]"
                         }
                       >
-                        {resp.status}
+                        {resp.status === "CONFIRMED"
+                          ? "Approved & Confirmed"
+                          : resp.status === "AVAILABLE"
+                          ? "Pending Approval"
+                          : resp.status}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">

@@ -48,7 +48,14 @@ export function FindDonorsSection() {
       }),
   });
 
-  const donors = data?.data || [];
+  const rawDonors = data?.data || [];
+  // Business rule: Donors who donated within the last 6 months must not be shown
+  const sixMonthsAgo = new Date();
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  const donors = rawDonors.filter((d: any) => {
+    if (!d.lastDonationDate) return true;
+    return new Date(d.lastDonationDate) <= sixMonthsAgo;
+  });
 
   const handleSearch = () => {
     const params = new URLSearchParams();

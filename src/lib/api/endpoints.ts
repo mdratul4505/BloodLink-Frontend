@@ -45,6 +45,8 @@ export const API_ENDPOINTS = {
     DELETE: (id: string) => `/blood-requests/${id}`,
     RESPOND: (id: string) => `/blood-requests/${id}/respond`,
     RESPONSES: (id: string) => `/blood-requests/${id}/responses`,
+    CONFIRM_RESPONSE: (id: string, donorId: string) =>
+      `/blood-requests/${id}/responses/${donorId}/confirm`,
     STATUS: (id: string) => `/blood-requests/${id}/status`,
     COMPLETE_DONATION: (id: string) => `/blood-requests/${id}/complete-donation`,
   },

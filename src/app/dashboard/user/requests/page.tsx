@@ -132,9 +132,9 @@ export default function MyRequestsPage() {
                     </TableCell>
                     <TableCell className="text-right space-x-2">
                       <Link href={`/blood-requests/${req.id}`}>
-                        <Button variant="ghost" size="xs" className="gap-1 text-xs">
+                        <Button variant="outline" size="xs" className="gap-1.5 text-xs font-semibold">
                           <Eye className="size-3" />
-                          <span>View</span>
+                          <span>View & Responses</span>
                         </Button>
                       </Link>
                       {req.status === "OPEN" && (

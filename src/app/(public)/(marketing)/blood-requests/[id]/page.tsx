@@ -17,6 +17,9 @@ import {
   CheckCircle2,
   MessageSquare,
   User,
+  Check,
+  Award,
+  PhoneCall,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -89,6 +92,49 @@ export default function BloodRequestDetailPage({
     },
   });
 
+  const confirmMutation = useMutation({
+    mutationFn: (donorId: string) => bloodRequestService.confirmResponse(id, donorId),
+    onSuccess: () => {
+      toast.add({
+        title: "Donor Offer Approved! 🩸",
+        description: "The donor has been confirmed and notified. You can now coordinate directly.",
+        type: "success",
+      });
+      queryClient.invalidateQueries({ queryKey: ["blood-request-detail", id] });
+      queryClient.invalidateQueries({ queryKey: ["blood-request-responses", id] });
+      queryClient.invalidateQueries({ queryKey: ["my-blood-requests"] });
+    },
+    onError: (err: any) => {
+      toast.add({
+        title: "Approval Failed",
+        description: err?.response?.data?.message || "Could not approve response.",
+        type: "error",
+      });
+    },
+  });
+
+  const completeDonationMutation = useMutation({
+    mutationFn: ({ donorId, units }: { donorId: string; units?: number }) =>
+      bloodRequestService.completeDonation(id, { donorId, unitsDonated: units || 1 }),
+    onSuccess: () => {
+      toast.add({
+        title: "Donation Completed! 🎉",
+        description: "Donation recorded successfully. The donor's profile has been updated.",
+        type: "success",
+      });
+      queryClient.invalidateQueries({ queryKey: ["blood-request-detail", id] });
+      queryClient.invalidateQueries({ queryKey: ["blood-request-responses", id] });
+      queryClient.invalidateQueries({ queryKey: ["my-blood-requests"] });
+    },
+    onError: (err: any) => {
+      toast.add({
+        title: "Action Failed",
+        description: err?.response?.data?.message || "Could not complete donation.",
+        type: "error",
+      });
+    },
+  });
+
   const request = data?.data;
   const responses = responsesData?.data || [];
 
@@ -151,7 +197,7 @@ export default function BloodRequestDetailPage({
     );
   }
 
-  const isRequester = user?.id === request.requesterId;
+  const isRequester = user?.id === request.requesterId || user?.role === "ADMIN";
   const isFulfilled = request.status === "FULFILLED";
 
   return (
@@ -336,44 +382,141 @@ export default function BloodRequestDetailPage({
 
           {responses.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {responses.map((resp: any) => (
-                <Card key={resp.id} className="border border-border/80">
-                  <CardContent className="p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="size-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
-                          {resp.donor?.name?.[0] || "D"}
+              {responses.map((resp: any) => {
+                const isMyResponse = user?.id === resp.donorId;
+                const isAvailable = resp.status === "AVAILABLE";
+                const isConfirmed = resp.status === "CONFIRMED";
+                const isDonated = resp.status === "DONATED";
+
+                return (
+                  <Card
+                    key={resp.id}
+                    className={`border transition-all ${
+                      isConfirmed
+                        ? "border-emerald-500/60 bg-emerald-50/20 dark:bg-emerald-950/20 shadow-xs"
+                        : isDonated
+                        ? "border-blue-500/40 bg-blue-50/10 dark:bg-blue-950/10"
+                        : "border-border/80"
+                    }`}
+                  >
+                    <CardContent className="p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className="size-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
+                            {resp.donor?.name?.[0] || "D"}
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-foreground">
+                              {resp.donor?.name || "Donor"}{" "}
+                              {isMyResponse && (
+                                <span className="text-[10px] text-primary font-normal">(You)</span>
+                              )}
+                            </p>
+                            <p className="text-[10px] text-muted-foreground">
+                              {new Date(resp.createdAt).toLocaleString()}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs font-bold text-foreground">
-                            {resp.donor?.name || "Donor"}
-                          </p>
-                          <p className="text-[10px] text-muted-foreground">
-                            {new Date(resp.createdAt).toLocaleString()}
-                          </p>
-                        </div>
+                        <Badge
+                          variant="outline"
+                          className={
+                            isDonated
+                              ? "bg-blue-600 text-white font-bold text-[10px] uppercase"
+                              : isConfirmed
+                              ? "bg-emerald-600 text-white font-bold text-[10px] uppercase"
+                              : isAvailable
+                              ? "border-amber-500 text-amber-600 dark:text-amber-400 font-bold text-[10px] uppercase"
+                              : "text-muted-foreground text-[10px]"
+                          }
+                        >
+                          {isConfirmed ? "Approved & Confirmed" : isDonated ? "Donation Completed" : resp.status}
+                        </Badge>
                       </div>
-                      <Badge
-                        variant="outline"
-                        className={
-                          resp.status === "AVAILABLE"
-                            ? "border-emerald-500 text-emerald-600 dark:text-emerald-400 font-bold text-[10px]"
-                            : resp.status === "DONATED"
-                            ? "bg-emerald-600 text-white text-[10px]"
-                            : "text-muted-foreground text-[10px]"
-                        }
-                      >
-                        {resp.status}
-                      </Badge>
-                    </div>
-                    {resp.message && (
-                      <p className="text-xs text-muted-foreground pl-10">
-                        &ldquo;{resp.message}&rdquo;
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
+
+                      {resp.message && (
+                        <p className="text-xs text-muted-foreground pl-3 border-l-2 border-primary/40 italic">
+                          &ldquo;{resp.message}&rdquo;
+                        </p>
+                      )}
+
+                      {/* Revealed Contact for Confirmed Donor / Requester */}
+                      {(isConfirmed || isDonated) && resp.donor?.phone && (
+                        <div className="p-2.5 rounded-lg bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-500/30 flex items-center justify-between text-xs">
+                          <span className="text-muted-foreground flex items-center gap-1.5 font-medium">
+                            <Phone className="size-3.5 text-emerald-600" />
+                            <span>Donor Hotline:</span>
+                          </span>
+                          <a
+                            href={`tel:${resp.donor.phone}`}
+                            className="font-bold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-1"
+                          >
+                            <PhoneCall className="size-3" />
+                            <span>{resp.donor.phone}</span>
+                          </a>
+                        </div>
+                      )}
+
+                      {/* Requester Action Buttons */}
+                      {isRequester && !isFulfilled && (
+                        <div className="pt-1 flex items-center justify-end gap-2">
+                          {isAvailable && (
+                            <Button
+                              size="xs"
+                              onClick={() => confirmMutation.mutate(resp.donorId)}
+                              disabled={confirmMutation.isPending}
+                              className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1 text-xs font-bold shadow-xs"
+                            >
+                              <Check className="size-3" />
+                              <span>Approve & Confirm Donor</span>
+                            </Button>
+                          )}
+
+                          {isConfirmed && (
+                            <Button
+                              size="xs"
+                              onClick={() =>
+                                completeDonationMutation.mutate({
+                                  donorId: resp.donorId,
+                                  units: 1,
+                                })
+                              }
+                              disabled={completeDonationMutation.isPending}
+                              className="bg-primary hover:bg-primary/90 text-white gap-1 text-xs font-bold shadow-xs"
+                            >
+                              <Award className="size-3" />
+                              <span>Mark Blood Donated</span>
+                            </Button>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Donor Perspective Messages */}
+                      {isMyResponse && !isRequester && (
+                        <div className="pt-1 text-[11px]">
+                          {isAvailable && (
+                            <span className="text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1">
+                              <Clock className="size-3" />
+                              Offer submitted. Awaiting approval by requester.
+                            </span>
+                          )}
+                          {isConfirmed && (
+                            <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                              <CheckCircle2 className="size-3" />
+                              Your offer was confirmed! Please call requester: {request.contactPhone}
+                            </span>
+                          )}
+                          {isDonated && (
+                            <span className="text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-1">
+                              <Award className="size-3" />
+                              Donation marked as completed! Thank you for saving a life.
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           ) : (
             <p className="text-xs text-muted-foreground italic">
